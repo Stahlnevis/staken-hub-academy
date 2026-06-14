@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProgrammesRouteImport } from './routes/programmes'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as CorporateRouteImport } from './routes/corporate'
@@ -22,6 +23,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const SuccessStoriesRoute = SuccessStoriesRouteImport.update({
   id: '/success-stories',
   path: '/success-stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProgrammesRoute = ProgrammesRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
   '/programmes': typeof ProgrammesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
   '/programmes': typeof ProgrammesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
   '/programmes': typeof ProgrammesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/corporate'
     | '/events'
     | '/programmes'
+    | '/sitemap.xml'
     | '/success-stories'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/corporate'
     | '/events'
     | '/programmes'
+    | '/sitemap.xml'
     | '/success-stories'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/corporate'
     | '/events'
     | '/programmes'
+    | '/sitemap.xml'
     | '/success-stories'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   CorporateRoute: typeof CorporateRoute
   EventsRoute: typeof EventsRoute
   ProgrammesRoute: typeof ProgrammesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuccessStoriesRoute: typeof SuccessStoriesRoute
 }
 
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/success-stories'
       fullPath: '/success-stories'
       preLoaderRoute: typeof SuccessStoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/programmes': {
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   CorporateRoute: CorporateRoute,
   EventsRoute: EventsRoute,
   ProgrammesRoute: ProgrammesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuccessStoriesRoute: SuccessStoriesRoute,
 }
 export const routeTree = rootRouteImport
