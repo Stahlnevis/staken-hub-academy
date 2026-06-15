@@ -7,9 +7,7 @@ const NAV = [
   { to: "/about", label: "About Us" },
   { to: "/programmes", label: "Programmes" },
   { to: "/bootcamps", label: "Bootcamps" },
-  { to: "/corporate", label: "Corporate Training" },
   { to: "/events", label: "Events" },
-  { to: "/success-stories", label: "Success Stories" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -33,13 +31,13 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-20 grid grid-cols-[auto_1fr_auto] items-center gap-4">
         <Logo />
-        <nav className="hidden lg:flex items-center justify-center gap-3 xl:gap-7 text-[13px] xl:text-sm font-medium text-muted-foreground">
+        <nav className="hidden lg:flex items-center justify-center gap-3 xl:gap-7 text-[13px] xl:text-sm font-bold text-muted-foreground">
           {NAV.map((n) => (
             <Link
               key={n.to}
               to={n.to}
-              className="relative py-1 hover:text-primary transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
-              activeProps={{ className: "text-primary font-semibold after:w-full" }}
+              className="relative px-3 py-1.5 rounded-md hover:text-primary hover:bg-primary/10 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              activeProps={{ className: "text-primary bg-primary/10 after:w-full" }}
               activeOptions={{ exact: n.to === "/" }}
             >
               {n.label}
