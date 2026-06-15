@@ -38,8 +38,8 @@ export function SiteHeader() {
             <Link
               key={n.to}
               to={n.to}
-              className="hover:text-primary transition-colors"
-              activeProps={{ className: "text-primary font-semibold" }}
+              className="relative py-1 hover:text-primary transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              activeProps={{ className: "text-primary font-semibold after:w-full" }}
               activeOptions={{ exact: n.to === "/" }}
             >
               {n.label}
