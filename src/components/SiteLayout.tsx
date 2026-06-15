@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { Menu, X, Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Facebook } from "lucide-react";
+import logoAsset from "@/assets/staken-hub-logo.png.asset.json";
 
 const NAV = [
   { to: "/", label: "Home" },
