@@ -20,8 +20,8 @@ function Logo() {
         S
       </div>
       <div className="flex flex-col leading-tight">
-        <span className="font-display font-bold text-lg tracking-tight text-primary">STAKEN HUB</span>
-        <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground -mt-0.5">Academy</span>
+        <span className="font-display font-bold text-base sm:text-lg tracking-tight text-primary">STAKEN HUB</span>
+        <span className="hidden sm:block text-[10px] uppercase tracking-[0.18em] text-muted-foreground -mt-0.5">Academy</span>
       </div>
     </Link>
   );
@@ -33,7 +33,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-20 grid grid-cols-[auto_1fr_auto] items-center gap-4">
         <Logo />
-        <nav className="hidden xl:flex items-center justify-center gap-7 text-sm font-medium text-muted-foreground">
+        <nav className="hidden lg:flex items-center justify-center gap-3 xl:gap-7 text-[13px] xl:text-sm font-medium text-muted-foreground">
           {NAV.map((n) => (
             <Link
               key={n.to}
@@ -56,7 +56,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="xl:hidden inline-flex items-center justify-center size-10 rounded-lg text-primary hover:bg-primary-soft"
+            className="lg:hidden inline-flex items-center justify-center size-10 rounded-lg text-primary hover:bg-primary-soft"
             aria-label="Toggle menu"
           >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -64,7 +64,7 @@ export function SiteHeader() {
         </div>
       </div>
       {open && (
-        <div className="xl:hidden border-t border-border bg-background animate-fade-in">
+        <div className="lg:hidden border-t border-border bg-background animate-fade-in">
           <nav className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex flex-col gap-1">
             {NAV.map((n) => (
               <Link
