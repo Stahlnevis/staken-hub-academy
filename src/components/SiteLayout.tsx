@@ -15,13 +15,11 @@ const NAV = [
 function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5 shrink-0">
-      <div className="size-10 rounded-xl bg-primary grid place-items-center text-mint font-display font-bold text-xl shadow-elegant">
-        S
-      </div>
-      <div className="flex flex-col leading-tight">
-        <span className="font-display font-bold text-base sm:text-lg tracking-tight text-primary">STAKEN HUB</span>
-        <span className="hidden sm:block text-[10px] uppercase tracking-[0.18em] text-muted-foreground -mt-0.5">Academy</span>
-      </div>
+      <img
+        src={logoAsset.url}
+        alt="Staken Hub Academy"
+        className="h-14 sm:h-16 w-auto object-contain"
+      />
     </Link>
   );
 }
