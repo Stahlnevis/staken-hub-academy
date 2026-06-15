@@ -20,8 +20,8 @@ function Logo() {
         S
       </div>
       <div className="flex flex-col leading-tight">
-        <span className="font-display font-bold text-lg tracking-tight text-primary">STAKEN HUB</span>
-        <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground -mt-0.5">Academy</span>
+        <span className="font-display font-bold text-base sm:text-lg tracking-tight text-primary">STAKEN HUB</span>
+        <span className="hidden sm:block text-[10px] uppercase tracking-[0.18em] text-muted-foreground -mt-0.5">Academy</span>
       </div>
     </Link>
   );
