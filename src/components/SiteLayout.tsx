@@ -98,10 +98,12 @@ export function SiteFooter() {
     <footer className="bg-primary text-primary-foreground pt-20 pb-10 mt-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 grid gap-12 lg:grid-cols-4 mb-16">
         <div className="lg:col-span-1">
-          <div className="flex items-center gap-2.5 mb-5">
-            <div className="size-10 rounded-xl bg-mint grid place-items-center text-primary font-display font-bold text-xl">
-              S
-            </div>
+          <div className="flex items-center gap-3 mb-5">
+            <img
+              src={logoAsset.url}
+              alt="Staken Hub Academy"
+              className="h-12 w-auto object-contain"
+            />
             <div className="flex flex-col leading-tight">
               <span className="font-display font-bold text-lg">STAKEN HUB</span>
               <span className="text-[10px] uppercase tracking-[0.18em] opacity-70">Academy</span>
