@@ -99,11 +99,13 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 grid gap-12 lg:grid-cols-4 mb-16">
         <div className="lg:col-span-1">
           <div className="flex items-center gap-3 mb-5">
-            <img
-              src={logoAsset.url}
-              alt="Staken Hub Academy"
-              className="h-12 w-auto object-contain"
-            />
+            <div className="bg-white rounded-lg p-1.5">
+              <img
+                src={logoAsset.url}
+                alt="Staken Hub Academy"
+                className="h-10 w-auto object-contain"
+              />
+            </div>
             <div className="flex flex-col leading-tight">
               <span className="font-display font-bold text-lg">STAKEN HUB</span>
               <span className="text-[10px] uppercase tracking-[0.18em] opacity-70">Academy</span>
