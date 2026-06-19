@@ -30,16 +30,13 @@ export const Route = createFileRoute("/announcements")({
     ],
   }),
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(
-      announcementsQueryOptions(listAnnouncements),
-    );
+    await context.queryClient.ensureQueryData(announcementsQueryOptions);
   },
   component: AnnouncementsPage,
 });
 
 function AnnouncementsPage() {
-  const fn = useServerFn(listAnnouncements);
-  const { data: posters } = useSuspenseQuery(announcementsQueryOptions(fn));
+  const { data: posters } = useSuspenseQuery(announcementsQueryOptions);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
