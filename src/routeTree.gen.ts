@@ -16,6 +16,7 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as CorporateRouteImport } from './routes/corporate'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BootcampsRouteImport } from './routes/bootcamps'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as AboutRouteImport } from './routes/about'
@@ -56,6 +57,11 @@ const BootcampsRoute = BootcampsRouteImport.update({
   path: '/bootcamps',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApplyRoute = ApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/announcements': typeof AnnouncementsRoute
   '/apply': typeof ApplyRoute
+  '/auth': typeof AuthRoute
   '/bootcamps': typeof BootcampsRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/announcements': typeof AnnouncementsRoute
   '/apply': typeof ApplyRoute
+  '/auth': typeof AuthRoute
   '/bootcamps': typeof BootcampsRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/announcements': typeof AnnouncementsRoute
   '/apply': typeof ApplyRoute
+  '/auth': typeof AuthRoute
   '/bootcamps': typeof BootcampsRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/announcements'
     | '/apply'
+    | '/auth'
     | '/bootcamps'
     | '/contact'
     | '/corporate'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/announcements'
     | '/apply'
+    | '/auth'
     | '/bootcamps'
     | '/contact'
     | '/corporate'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/announcements'
     | '/apply'
+    | '/auth'
     | '/bootcamps'
     | '/contact'
     | '/corporate'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
   ApplyRoute: typeof ApplyRoute
+  AuthRoute: typeof AuthRoute
   BootcampsRoute: typeof BootcampsRoute
   ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BootcampsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apply': {
       id: '/apply'
       path: '/apply'
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AnnouncementsRoute: AnnouncementsRoute,
   ApplyRoute: ApplyRoute,
+  AuthRoute: AuthRoute,
   BootcampsRoute: BootcampsRoute,
   ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
