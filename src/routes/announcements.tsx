@@ -1,6 +1,5 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Calendar, Megaphone, ExternalLink } from "lucide-react";
 
@@ -8,10 +7,10 @@ import { SiteLayout, PageHero } from "@/components/SiteLayout";
 import { listAnnouncements } from "@/lib/announcements.functions";
 import { supabase } from "@/integrations/supabase/client";
 
-const announcementsQueryOptions = (fn: typeof listAnnouncements) => ({
-  queryKey: ["announcements"],
-  queryFn: () => fn(),
-});
+const announcementsQueryOptions = {
+  queryKey: ["announcements"] as const,
+  queryFn: () => listAnnouncements(),
+};
 
 export const Route = createFileRoute("/announcements")({
   head: () => ({
