@@ -16,9 +16,13 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as CorporateRouteImport } from './routes/corporate'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BootcampsRouteImport } from './routes/bootcamps'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApplyRouteImport } from './routes/apply'
+import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedAdminPostersRouteImport } from './routes/_authenticated/admin.posters'
 
 const SuccessStoriesRoute = SuccessStoriesRouteImport.update({
   id: '/success-stories',
@@ -55,9 +59,19 @@ const BootcampsRoute = BootcampsRouteImport.update({
   path: '/bootcamps',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApplyRoute = ApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnnouncementsRoute = AnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -65,16 +79,28 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminPostersRoute =
+  AuthenticatedAdminPostersRouteImport.update({
+    id: '/admin/posters',
+    path: '/admin/posters',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/announcements': typeof AnnouncementsRoute
   '/apply': typeof ApplyRoute
+  '/auth': typeof AuthRoute
   '/bootcamps': typeof BootcampsRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
@@ -82,11 +108,14 @@ export interface FileRoutesByFullPath {
   '/programmes': typeof ProgrammesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
+  '/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/announcements': typeof AnnouncementsRoute
   '/apply': typeof ApplyRoute
+  '/auth': typeof AuthRoute
   '/bootcamps': typeof BootcampsRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
@@ -94,12 +123,16 @@ export interface FileRoutesByTo {
   '/programmes': typeof ProgrammesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
+  '/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/announcements': typeof AnnouncementsRoute
   '/apply': typeof ApplyRoute
+  '/auth': typeof AuthRoute
   '/bootcamps': typeof BootcampsRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
@@ -107,13 +140,16 @@ export interface FileRoutesById {
   '/programmes': typeof ProgrammesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
+  '/_authenticated/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/announcements'
     | '/apply'
+    | '/auth'
     | '/bootcamps'
     | '/contact'
     | '/corporate'
@@ -121,11 +157,14 @@ export interface FileRouteTypes {
     | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
+    | '/admin/posters'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/announcements'
     | '/apply'
+    | '/auth'
     | '/bootcamps'
     | '/contact'
     | '/corporate'
@@ -133,11 +172,15 @@ export interface FileRouteTypes {
     | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
+    | '/admin/posters'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
+    | '/announcements'
     | '/apply'
+    | '/auth'
     | '/bootcamps'
     | '/contact'
     | '/corporate'
@@ -145,12 +188,16 @@ export interface FileRouteTypes {
     | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
+    | '/_authenticated/admin/posters'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AnnouncementsRoute: typeof AnnouncementsRoute
   ApplyRoute: typeof ApplyRoute
+  AuthRoute: typeof AuthRoute
   BootcampsRoute: typeof BootcampsRoute
   ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
@@ -211,11 +258,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BootcampsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apply': {
       id: '/apply'
       path: '/apply'
       fullPath: '/apply'
       preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/announcements': {
+      id: '/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -225,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -232,13 +300,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/posters': {
+      id: '/_authenticated/admin/posters'
+      path: '/admin/posters'
+      fullPath: '/admin/posters'
+      preLoaderRoute: typeof AuthenticatedAdminPostersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminPostersRoute: typeof AuthenticatedAdminPostersRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminPostersRoute: AuthenticatedAdminPostersRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AnnouncementsRoute: AnnouncementsRoute,
   ApplyRoute: ApplyRoute,
+  AuthRoute: AuthRoute,
   BootcampsRoute: BootcampsRoute,
   ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
