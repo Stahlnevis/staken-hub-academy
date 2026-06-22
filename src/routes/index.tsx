@@ -5,7 +5,7 @@ import {
   Laptop, Building2, CalendarRange, Sun, Quote, ArrowUpRight,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { COHORTS, EVENTS, TESTIMONIALS } from "@/lib/programmes";
+import { COHORTS, TESTIMONIALS } from "@/lib/programmes";
 import heroImage from "@/assets/hero-students.jpg";
 import alumni1 from "@/assets/alumni-1.jpg";
 import alumni2 from "@/assets/alumni-2.jpg";
