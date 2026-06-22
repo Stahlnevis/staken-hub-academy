@@ -148,57 +148,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* PROGRAMMES */}
-      <section id="programmes" className="py-24 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
-            <div className="max-w-2xl">
-              <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
-                Our Programmes
-              </span>
-              <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-primary leading-tight">
-                Specialized tracks for the digital economy
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                Industry-vetted curricula designed to take you from beginner to professional in months — not years.
-              </p>
-            </div>
-            <Link to="/programmes" className="text-primary font-semibold hover:underline inline-flex items-center gap-2">
-              View all programmes <ArrowRight className="size-4" />
-            </Link>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
-            {PROGRAMMES.map((p) => (
-              <article
-                key={p.slug}
-                className="group bg-card border border-border rounded-2xl p-7 hover:border-mint/50 hover:shadow-elegant hover:-translate-y-1 transition-all"
-              >
-                <div className="size-12 bg-primary-soft text-primary rounded-xl grid place-items-center mb-5 group-hover:bg-mint group-hover:text-primary transition-colors">
-                  <p.icon className="size-5" />
-                </div>
-                <h3 className="text-xl font-semibold text-primary mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{p.description}</p>
-                <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground mb-6">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-mint" /> {p.duration}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-amber-warm" /> {p.level}
-                  </span>
-                </div>
-                <Link
-                  to="/programmes"
-                  className="inline-flex items-center justify-center w-full py-3 rounded-lg border border-primary/15 font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm"
-                >
-                  Learn More
-                </Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* WHY CHOOSE */}
       <section className="py-24 lg:py-28 bg-surface">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
@@ -431,6 +380,3 @@ function HomePage() {
   );
 }
 
-// silence unused import warnings if any
-void BookOpen;
-void Award;
