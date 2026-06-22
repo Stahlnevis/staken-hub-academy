@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowRight, CheckCircle2, Users, BookOpen, Award, GraduationCap, Sparkles,
+  ArrowRight, CheckCircle2, Users, GraduationCap, Sparkles,
   Laptop, Building2, CalendarRange, Sun, Quote, ArrowUpRight,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { PROGRAMMES, COHORTS, EVENTS, TESTIMONIALS } from "@/lib/programmes";
+import { COHORTS, EVENTS, TESTIMONIALS } from "@/lib/programmes";
 import heroImage from "@/assets/hero-students.jpg";
 import alumni1 from "@/assets/alumni-1.jpg";
 import alumni2 from "@/assets/alumni-2.jpg";
