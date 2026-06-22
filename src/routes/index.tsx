@@ -5,7 +5,7 @@ import {
   Laptop, Building2, CalendarRange, Sun, Quote, ArrowUpRight,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { COHORTS, EVENTS, TESTIMONIALS } from "@/lib/programmes";
+import { COHORTS, TESTIMONIALS } from "@/lib/programmes";
 import heroImage from "@/assets/hero-students.jpg";
 import alumni1 from "@/assets/alumni-1.jpg";
 import alumni2 from "@/assets/alumni-2.jpg";
@@ -311,43 +311,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* EVENTS */}
-      <section className="py-24 lg:py-28 bg-surface">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-            <div className="max-w-xl">
-              <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
-                Events & Workshops
-              </span>
-              <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-primary leading-tight">
-                Build, learn and connect
-              </h2>
-            </div>
-            <Link to="/events" className="text-primary font-semibold hover:underline inline-flex items-center gap-2">
-              See all events <ArrowRight className="size-4" />
-            </Link>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5 lg:gap-6">
-            {EVENTS.map((e) => (
-              <article
-                key={e.title}
-                className="bg-card border border-border rounded-2xl p-7 hover:border-mint/40 hover:shadow-soft transition-all"
-              >
-                <div className="flex items-center gap-3 mb-4 text-xs">
-                  <span className="px-2.5 py-1 rounded-full bg-mint/20 text-primary font-semibold uppercase tracking-wider">
-                    {e.type}
-                  </span>
-                  <span className="text-muted-foreground">{e.date}</span>
-                  <span className="text-muted-foreground">• {e.location}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-primary mb-2">{e.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{e.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
 
 
       {/* FINAL CTA */}
