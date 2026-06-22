@@ -400,40 +400,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* CORPORATE TRAINING */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-3xl bg-primary text-primary-foreground p-10 md:p-14 lg:p-16">
-            <div className="absolute -top-24 -right-24 size-72 bg-mint/20 rounded-full blur-3xl" />
-            <div className="relative grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center">
-              <div>
-                <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-mint mb-3">
-                  Corporate Training
-                </span>
-                <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl leading-tight mb-5">
-                  Upskill your team for the AI era
-                </h2>
-                <p className="text-primary-foreground/80 mb-8 max-w-xl">
-                  Customised programmes for organisations in cybersecurity awareness, AI literacy, programming fundamentals and digital upskilling.
-                </p>
-                <Link
-                  to="/corporate"
-                  className="inline-flex items-center gap-2 bg-mint text-primary font-bold px-7 py-4 rounded-xl hover:brightness-105 transition-all"
-                >
-                  Request a Proposal <ArrowRight className="size-4" />
-                </Link>
-              </div>
-              <ul className="grid grid-cols-2 gap-3 text-sm">
-                {["Cybersecurity Awareness", "AI Literacy", "Programming Foundations", "Digital Upskilling"].map((t) => (
-                  <li key={t} className="bg-white/10 backdrop-blur rounded-xl p-4 font-medium">
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* FINAL CTA */}
       <section className="py-24 lg:py-28">
