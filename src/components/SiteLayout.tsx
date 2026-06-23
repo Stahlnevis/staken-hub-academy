@@ -45,16 +45,16 @@ function LoginMenu({ compact }: { compact?: boolean }) {
           type="button"
           aria-label="Login"
           className={cn(
-            "group inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors",
+            "group/trigger inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors",
             "border border-primary/80 text-primary hover:bg-primary-soft hover:text-primary",
             compact
-              ? "size-10 sm:h-auto sm:px-5 sm:py-2.5"
+              ? "size-10 sm:h-auto sm:w-auto sm:px-5 sm:py-2.5"
               : "px-5 py-2.5 text-sm"
           )}
         >
           <User className="size-5 sm:size-4" />
           <span className="hidden sm:inline">Login</span>
-          <ChevronDown className="hidden sm:inline size-4 transition-transform group-data-[state=open]:rotate-180" />
+          <ChevronDown className="hidden sm:inline size-4 transition-transform group-data-[state=open]/trigger:rotate-180" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
