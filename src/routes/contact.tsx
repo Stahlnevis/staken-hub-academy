@@ -57,7 +57,7 @@ function ContactPage() {
         <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid lg:grid-cols-[1fr_1.2fr] gap-10">
           <div className="space-y-6">
             {[
-              { Icon: Mail, t: "Email", v: "admissions@stakenhub.academy" },
+              { Icon: Mail, t: "Email", v: "admissions@stakenhub.com", href: "mailto:admissions@stakenhub.com" },
               { Icon: Phone, t: "Phone", v: "+254 712 345 678" },
               { Icon: MessageCircle, t: "WhatsApp", v: "+254 712 345 678", href: "https://wa.me/254712345678" },
               { Icon: MapPin, t: "Visit", v: "Nairobi Tech Quarter, Kenya" },

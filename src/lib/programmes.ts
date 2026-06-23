@@ -96,7 +96,7 @@ export const PROGRAMMES: Programme[] = [
 
 export const COHORTS = [
   { programme: "Cybersecurity Specialist", date: "September 15, 2026", duration: "16 Weeks • Evening", mode: "Hybrid" },
-  { programme: "Full-Stack Web Development", date: "October 02, 2026", duration: "20 Weeks • Full-time", mode: "Physical" },
+  { programme: "Full-Stack Web Development", date: "October 02, 2026", duration: "20 Weeks • Full-time", mode: "Hybrid" },
   { programme: "Data Science & Analytics", date: "October 14, 2026", duration: "20 Weeks • Weekends", mode: "Online" },
   { programme: "AI Awareness for Leaders", date: "November 05, 2026", duration: "6 Weeks • Evenings", mode: "Online" },
   { programme: "UI/UX Design Studio", date: "November 20, 2026", duration: "14 Weeks • Hybrid", mode: "Hybrid" },

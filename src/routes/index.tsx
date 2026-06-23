@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight, CheckCircle2, Users, GraduationCap, Sparkles,
-  Laptop, Building2, CalendarRange, Sun, Quote, ArrowUpRight,
+  Laptop, Sun, Quote, ArrowUpRight,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { COHORTS, TESTIMONIALS } from "@/lib/programmes";
+import { TESTIMONIALS } from "@/lib/programmes";
 import heroImage from "@/assets/hero-students.jpg";
 import alumni1 from "@/assets/alumni-1.jpg";
 import alumni2 from "@/assets/alumni-2.jpg";
@@ -166,7 +166,7 @@ function HomePage() {
             {[
               { t: "Hands-on Learning", d: "Build production-grade projects from week one." },
               { t: "Industry Mentors", d: "1:1 access to senior engineers and designers." },
-              { t: "Flexible Modes", d: "Online, physical, hybrid and weekend bootcamps." },
+              { t: "Flexible Modes", d: "Online, hybrid and weekend bootcamps." },
               { t: "Career Guidance", d: "Mock interviews, portfolio reviews, and placement." },
               { t: "Practical Projects", d: "Live client briefs and capstone case studies." },
               { t: "Certified Graduates", d: "Industry-recognised certification on completion." },
@@ -200,10 +200,9 @@ function HomePage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
             {[
               { Icon: Laptop, t: "Online Classes", d: "Live, interactive sessions from anywhere on the continent." },
-              { Icon: Building2, t: "Physical Classes", d: "On-campus immersion at our hubs in Nairobi and Eldoret." },
               { Icon: Users, t: "Hybrid Learning", d: "Mix online theory with in-person labs and team projects." },
               { Icon: Sun, t: "Weekend Bootcamps", d: "Intensive upskilling for working professionals." },
             ].map((m, i) => (
@@ -232,44 +231,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* UPCOMING COHORTS */}
-      <section className="py-24 lg:py-28 bg-surface">
-        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-            <div>
-              <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
-                Upcoming Cohorts
-              </span>
-              <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-primary leading-tight">
-                Next intakes opening soon
-              </h2>
-            </div>
-            <CalendarRange className="size-10 text-primary/30 hidden md:block" />
-          </div>
 
-          <div className="bg-card rounded-2xl border border-border overflow-hidden divide-y divide-border">
-            {COHORTS.map((c) => (
-              <div
-                key={c.programme}
-                className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_auto] gap-4 md:gap-6 items-center px-5 md:px-7 py-5 md:py-6 hover:bg-primary-soft/40 transition-colors"
-              >
-                <div className="min-w-0">
-                  <p className="font-semibold text-primary text-base md:text-lg">{c.programme}</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">{c.mode}</p>
-                </div>
-                <p className="text-sm text-muted-foreground">{c.date}</p>
-                <p className="text-sm text-muted-foreground">{c.duration}</p>
-                <Link
-                  to="/apply"
-                  className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-primary/15 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
-                >
-                  Apply <ArrowUpRight className="size-3.5" />
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* SUCCESS STORIES */}
       <section className="py-24 lg:py-28">

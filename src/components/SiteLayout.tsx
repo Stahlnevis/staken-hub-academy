@@ -223,7 +223,7 @@ export function SiteFooter() {
         <div>
           <h4 className="font-display font-bold text-base mb-5">Get in Touch</h4>
           <ul className="space-y-3 text-sm text-primary-foreground/75">
-            <li className="flex items-start gap-2.5"><Mail className="size-4 mt-0.5 shrink-0 text-mint" /> admissions@stakenhub.academy</li>
+            <li className="flex items-start gap-2.5"><Mail className="size-4 mt-0.5 shrink-0 text-mint" /> admissions@stakenhub.com</li>
             <li className="flex items-start gap-2.5"><Phone className="size-4 mt-0.5 shrink-0 text-mint" /> +254 712 345 678</li>
             <li className="flex items-start gap-2.5"><MapPin className="size-4 mt-0.5 shrink-0 text-mint" /> Nairobi Tech Quarter, Kenya</li>
           </ul>

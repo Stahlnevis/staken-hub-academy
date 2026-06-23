@@ -130,8 +130,8 @@ function ApplyPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-primary mb-2">Preferred learning mode</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
-                  {["Online", "Physical", "Hybrid", "Weekend"].map((m) => (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
+                  {["Online", "Hybrid", "Weekend Bootcamp"].map((m) => (
                     <label key={m} className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border cursor-pointer hover:border-mint hover:bg-primary-soft/40">
                       <input type="radio" name="mode" value={m} defaultChecked={m === "Online"} disabled={isSubmitting} className="accent-primary" />
                       {m}
