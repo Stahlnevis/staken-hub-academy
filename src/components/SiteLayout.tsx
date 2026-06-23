@@ -54,7 +54,7 @@ function LoginMenu({ compact }: { compact?: boolean }) {
         >
           <User className="size-5 sm:size-4" />
           <span className="hidden sm:inline">Login</span>
-          <ChevronDown className="hidden sm:inline size-4 transition-transform group-data-[state=open]/trigger:rotate-180" />
+          <ChevronDown className="hidden sm:inline size-4" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
