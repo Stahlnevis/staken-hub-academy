@@ -23,8 +23,8 @@ import {
 import { cn } from "@/lib/utils";
 
 const LOGIN_LINKS = [
-  { label: "Online Academy", href: "#" },
-  { label: "Student Portal", href: "#" },
+  { label: "Online Academy", href: "https://academy.stakenhub.com/" },
+  { label: "Student Portal", href: "https://portal.stakenhub.com/login" },
 ] as const;
 
 const NAV = [
