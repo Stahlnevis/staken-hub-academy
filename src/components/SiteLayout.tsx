@@ -110,6 +110,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2 justify-end">
+          <LoginMenu compact />
           <Link
             to="/apply"
             className="hidden sm:inline-flex items-center rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
