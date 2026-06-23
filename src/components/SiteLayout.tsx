@@ -23,8 +23,8 @@ import {
 import { cn } from "@/lib/utils";
 
 const LOGIN_LINKS = [
-  { label: "Online Academy", href: "#" },
-  { label: "Student Portal", href: "#" },
+  { label: "Online Academy", href: "https://academy.stakenhub.com/" },
+  { label: "Student Portal", href: "https://portal.stakenhub.com/login" },
 ] as const;
 
 const NAV = [
@@ -43,26 +43,30 @@ function LoginMenu({ compact }: { compact?: boolean }) {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label="Login"
+          aria-label="Student Login"
           className={cn(
-            "group/trigger inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors",
-            "border border-primary/80 text-primary hover:bg-primary-soft hover:text-primary",
+            "group/trigger inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200",
+            "border border-primary/80 text-primary hover:bg-primary-soft hover:text-primary hover:shadow-md",
             compact
               ? "size-10 sm:h-auto sm:w-auto sm:px-5 sm:py-2.5"
               : "px-5 py-2.5 text-sm"
           )}
         >
-          <User className="size-5 sm:size-4" />
-          <span className="hidden sm:inline">Login</span>
-          <ChevronDown className="hidden sm:inline size-4" />
+          <User className="size-5 sm:size-4 transition-transform duration-200 group-hover/trigger:scale-110" />
+          <span className="hidden sm:inline">Student Login</span>
+          <ChevronDown className="hidden sm:inline size-4 transition-transform duration-200 group-data-[state=open]/trigger:rotate-180" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
+      <DropdownMenuContent
+        align="end"
+        className="w-56 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200"
+      >
         {LOGIN_LINKS.map((link) => (
           <DropdownMenuItem key={link.label} asChild>
             <a
               href={link.href}
-              className="w-full cursor-pointer"
+              target="_blank"
+              className="w-full cursor-pointer transition-colors duration-150"
               rel="noopener noreferrer"
             >
               {link.label}
