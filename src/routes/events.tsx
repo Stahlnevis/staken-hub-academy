@@ -102,7 +102,7 @@ function EventsPage() {
         title="Build, learn and connect"
         subtitle="Previous, current and upcoming bootcamps, workshops and activities at Staken Hub Academy."
       />
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+      <section className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 py-12">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
           <div role="tablist" className="inline-flex rounded-full bg-muted p-1 border border-border">
             {(

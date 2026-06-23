@@ -54,7 +54,7 @@ function ContactPage() {
       />
 
       <section className="py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 grid lg:grid-cols-[1fr_1.2fr] gap-10">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid lg:grid-cols-[1fr_1.2fr] gap-10">
           <div className="space-y-6">
             {[
               { Icon: Mail, t: "Email", v: "admissions@stakenhub.academy" },

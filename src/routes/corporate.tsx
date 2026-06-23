@@ -36,7 +36,7 @@ function CorporatePage() {
         subtitle="Customised programmes for organisations across Africa — delivered online, on-site or hybrid."
       />
       <section className="py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 grid sm:grid-cols-2 gap-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid sm:grid-cols-2 gap-6">
           {OFFERINGS.map(({ Icon, t, d }) => (
             <div key={t} className="bg-card border border-border rounded-2xl p-8">
               <div className="size-12 rounded-xl bg-primary-soft text-primary grid place-items-center mb-5">

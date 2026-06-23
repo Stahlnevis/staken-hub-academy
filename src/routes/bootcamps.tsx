@@ -30,7 +30,7 @@ function BootcampsPage() {
         subtitle="Intensive cohorts with mentor support, capstone projects and placement coaching."
       />
       <section className="py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16">
           <div className="bg-card rounded-2xl border border-border overflow-hidden divide-y divide-border">
             {COHORTS.map((c) => (
               <div

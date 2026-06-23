@@ -45,11 +45,11 @@ function LoginMenu({ compact }: { compact?: boolean }) {
           type="button"
           aria-label="Student Login"
           className={cn(
-            "group/trigger inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200",
-            "border border-primary/80 text-primary hover:bg-primary-soft hover:text-primary hover:shadow-md",
+            "group/trigger inline-flex items-center justify-center gap-1.5 rounded-full font-semibold transition-all duration-200",
+            "border border-primary/20 text-primary hover:bg-primary-soft hover:text-primary hover:shadow-sm hover:border-primary/40",
             compact
-              ? "size-10 sm:h-auto sm:w-auto sm:px-5 sm:py-2.5"
-              : "px-5 py-2.5 text-sm"
+              ? "size-10 sm:w-auto sm:px-4 sm:h-10 text-xs sm:text-sm"
+              : "h-10 px-4 text-sm"
           )}
         >
           <User className="size-5 sm:size-4 transition-transform duration-200 group-hover/trigger:scale-110" />
@@ -80,15 +80,17 @@ function LoginMenu({ compact }: { compact?: boolean }) {
 
 function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-3 shrink-0">
-      <img
-        src={logoAsset.url}
-        alt="Staken Hub Academy"
-        className="h-12 sm:h-14 w-auto object-contain"
-      />
-      <div className="flex flex-col leading-tight">
-        <span className="font-display font-bold text-base sm:text-lg tracking-tight text-primary">STAKEN HUB</span>
-        <span className="hidden sm:block text-[10px] uppercase tracking-[0.18em] text-muted-foreground -mt-0.5">Academy</span>
+    <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+      <div className="size-9 sm:size-10 overflow-hidden relative shrink-0">
+        <img
+          src={logoAsset.url}
+          alt="Staken Hub Academy Logo"
+          className="h-[155%] w-auto max-w-none absolute top-0 left-1/2 -translate-x-1/2 object-contain"
+        />
+      </div>
+      <div className="flex flex-col leading-none">
+        <span className="font-display font-bold text-sm sm:text-base tracking-tight text-primary">STAKEN HUB</span>
+        <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.18em] text-muted-foreground mt-0.5">Academy</span>
       </div>
     </Link>
   );
@@ -98,14 +100,14 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-20 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+      <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 h-20 grid grid-cols-[auto_1fr_auto] items-center gap-4">
         <Logo />
-        <nav className="hidden lg:flex items-center justify-center gap-3 xl:gap-7 text-[13px] xl:text-sm font-bold text-muted-foreground">
+        <nav className="hidden lg:flex items-center justify-center lg:gap-2 xl:gap-6 lg:text-xs xl:text-sm font-bold text-muted-foreground">
           {NAV.map((n) => (
             <Link
               key={n.to}
               to={n.to}
-              className="relative px-3 py-1.5 rounded-md hover:text-primary hover:bg-primary/10 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              className="relative whitespace-nowrap px-2.5 py-1.5 rounded-md hover:text-primary hover:bg-primary/10 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
               activeProps={{ className: "text-primary bg-primary/10 after:w-full" }}
               activeOptions={{ exact: n.to === "/" }}
             >
@@ -117,7 +119,7 @@ export function SiteHeader() {
           <LoginMenu compact />
           <Link
             to="/apply"
-            className="hidden sm:inline-flex items-center rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
+            className="hidden sm:inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground px-5 h-10 text-sm font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
           >
             Apply Now
           </Link>
@@ -133,7 +135,7 @@ export function SiteHeader() {
       </div>
       {open && (
         <div className="lg:hidden border-t border-border bg-background animate-fade-in">
-          <nav className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex flex-col gap-1">
+          <nav className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 py-4 flex flex-col gap-1">
             {NAV.map((n) => (
               <Link
                 key={n.to}
@@ -163,19 +165,19 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="bg-primary text-primary-foreground pt-20 pb-10 mt-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 grid gap-12 lg:grid-cols-4 mb-16">
+      <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid gap-12 lg:grid-cols-4 mb-16">
         <div className="lg:col-span-1">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="bg-white rounded-lg p-1.5">
+          <div className="flex items-center gap-2.5 mb-5">
+            <div className="bg-white rounded-lg p-1 size-10 overflow-hidden relative flex items-center justify-center">
               <img
                 src={logoAsset.url}
-                alt="Staken Hub Academy"
-                className="h-10 w-auto object-contain"
+                alt="Staken Hub Academy Logo"
+                className="h-[155%] w-auto max-w-none absolute top-0 left-1/2 -translate-x-1/2 object-contain"
               />
             </div>
-            <div className="flex flex-col leading-tight">
-              <span className="font-display font-bold text-lg">STAKEN HUB</span>
-              <span className="text-[10px] uppercase tracking-[0.18em] opacity-70">Academy</span>
+            <div className="flex flex-col leading-none">
+              <span className="font-display font-bold text-base tracking-tight text-white">STAKEN HUB</span>
+              <span className="text-[9px] uppercase tracking-[0.18em] text-white/70 mt-0.5">Academy</span>
             </div>
           </div>
           <p className="text-sm text-primary-foreground/70 leading-relaxed mb-6 max-w-xs">
@@ -227,7 +229,7 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-4 text-xs text-primary-foreground/60">
+      <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-4 text-xs text-primary-foreground/60">
         <p>© 2026 Staken Hub Academy. All Rights Reserved.</p>
         <div className="flex gap-6">
           <a href="#" className="hover:text-mint">Privacy Policy</a>
@@ -251,7 +253,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 export function PageHero({ eyebrow, title, subtitle }: { eyebrow?: string; title: string; subtitle?: string }) {
   return (
     <section className="relative bg-gradient-hero border-b border-border">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-20 lg:py-28 text-center">
+      <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 py-20 lg:py-28 text-center">
         {eyebrow && (
           <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-4">
             {eyebrow}

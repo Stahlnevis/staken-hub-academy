@@ -30,7 +30,7 @@ function AboutPage() {
       />
 
       <section className="py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 grid md:grid-cols-2 gap-8">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid md:grid-cols-2 gap-8">
           <div className="bg-card border border-border rounded-2xl p-8 shadow-soft">
             <div className="size-12 rounded-xl bg-primary-soft text-primary grid place-items-center mb-5">
               <Eye className="size-5" />
@@ -53,7 +53,7 @@ function AboutPage() {
       </section>
 
       <section className="py-20 bg-surface">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 text-center">
           <h2 className="font-display font-bold text-3xl md:text-4xl text-primary mb-12">What we stand for</h2>
           <div className="grid sm:grid-cols-3 gap-6">
             {[

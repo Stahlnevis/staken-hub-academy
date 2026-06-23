@@ -31,7 +31,7 @@ function StoriesPage() {
         subtitle="Hear from graduates who transformed their careers through Staken Hub Academy."
       />
       <section className="py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-3 gap-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t) => (
             <figure
               key={t.name}

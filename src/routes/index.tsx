@@ -82,7 +82,7 @@ function HomePage() {
     <SiteLayout>
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-20 lg:pt-20 lg:pb-28 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 pt-14 pb-20 lg:pt-20 lg:pb-28 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-mint/15 border border-mint/30 text-primary text-xs font-bold uppercase tracking-widest mb-6">
               <span className="size-2 bg-mint rounded-full animate-pulse" />
@@ -140,7 +140,7 @@ function HomePage() {
 
       {/* STATS */}
       <section className="bg-primary py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           <StatItem end={2500} suffix="+" label="Students Trained" />
           <StatItem end={18} suffix="+" label="Courses Offered" />
           <StatItem end={45} suffix="+" label="Industry Mentors" />
@@ -150,7 +150,7 @@ function HomePage() {
 
       {/* WHY CHOOSE */}
       <section className="py-24 lg:py-28 bg-surface">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
           <div>
             <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
               Why Staken Hub
@@ -187,7 +187,7 @@ function HomePage() {
 
       {/* LEARNING MODES */}
       <section className="py-24 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
               Learning Modes
@@ -234,7 +234,7 @@ function HomePage() {
 
       {/* UPCOMING COHORTS */}
       <section className="py-24 lg:py-28 bg-surface">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
@@ -273,7 +273,7 @@ function HomePage() {
 
       {/* SUCCESS STORIES */}
       <section className="py-24 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="inline-block text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
               Success Stories

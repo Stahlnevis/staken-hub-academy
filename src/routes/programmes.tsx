@@ -29,7 +29,7 @@ function ProgrammesPage() {
         subtitle="Industry-vetted curricula designed to take you from beginner to professional."
       />
       <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
           {PROGRAMMES.map((p) => (
             <article
               key={p.slug}
