@@ -1,7 +1,31 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Menu, X, Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Facebook } from "lucide-react";
+import {
+  Menu,
+  X,
+  Mail,
+  Phone,
+  MapPin,
+  Linkedin,
+  Twitter,
+  Instagram,
+  Facebook,
+  User,
+  ChevronDown,
+} from "lucide-react";
 import logoAsset from "@/assets/staken-hub-logo-teal.png.asset.json";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+
+const LOGIN_LINKS = [
+  { label: "Online Academy", href: "#" },
+  { label: "Student Portal", href: "#" },
+] as const;
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -12,6 +36,43 @@ const NAV = [
   { to: "/corporate", label: "Corporate Training" },
   { to: "/contact", label: "Contact" },
 ] as const;
+
+function LoginMenu({ compact }: { compact?: boolean }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Login"
+          className={cn(
+            "group/trigger inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors",
+            "border border-primary/80 text-primary hover:bg-primary-soft hover:text-primary",
+            compact
+              ? "size-10 sm:h-auto sm:w-auto sm:px-5 sm:py-2.5"
+              : "px-5 py-2.5 text-sm"
+          )}
+        >
+          <User className="size-5 sm:size-4" />
+          <span className="hidden sm:inline">Login</span>
+          <ChevronDown className="hidden sm:inline size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        {LOGIN_LINKS.map((link) => (
+          <DropdownMenuItem key={link.label} asChild>
+            <a
+              href={link.href}
+              className="w-full cursor-pointer"
+              rel="noopener noreferrer"
+            >
+              {link.label}
+            </a>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 function Logo() {
   return (
@@ -49,6 +110,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2 justify-end">
+          <LoginMenu compact />
           <Link
             to="/apply"
             className="hidden sm:inline-flex items-center rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
