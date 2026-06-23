@@ -1,7 +1,30 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Menu, X, Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Facebook } from "lucide-react";
+import {
+  Menu,
+  X,
+  Mail,
+  Phone,
+  MapPin,
+  Linkedin,
+  Twitter,
+  Instagram,
+  Facebook,
+  User,
+  ChevronDown,
+} from "lucide-react";
 import logoAsset from "@/assets/staken-hub-logo-teal.png.asset.json";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const LOGIN_LINKS = [
+  { label: "Online Academy", href: "#" },
+  { label: "Student Portal", href: "#" },
+] as const;
 
 const NAV = [
   { to: "/", label: "Home" },
