@@ -36,6 +36,43 @@ const NAV = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
+function LoginMenu({ compact }: { compact?: boolean }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Login"
+          className={cn(
+            "group inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors",
+            "border border-primary/80 text-primary hover:bg-primary-soft hover:text-primary",
+            compact
+              ? "size-10 sm:h-auto sm:px-5 sm:py-2.5"
+              : "px-5 py-2.5 text-sm"
+          )}
+        >
+          <User className="size-5 sm:size-4" />
+          <span className="hidden sm:inline">Login</span>
+          <ChevronDown className="hidden sm:inline size-4 transition-transform group-data-[state=open]:rotate-180" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        {LOGIN_LINKS.map((link) => (
+          <DropdownMenuItem key={link.label} asChild>
+            <a
+              href={link.href}
+              className="w-full cursor-pointer"
+              rel="noopener noreferrer"
+            >
+              {link.label}
+            </a>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function Logo() {
   return (
     <Link to="/" className="flex items-center gap-3 shrink-0">
