@@ -12,4 +12,6 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Force-enable Nitro server bundling so Vercel compiles dynamic SSR routes instead of seeking index.html.
+  nitro: process.env.VERCEL ? { preset: "vercel" } : true,
 });
