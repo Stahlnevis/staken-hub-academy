@@ -104,10 +104,10 @@ export const COHORTS = [
 
 export const EVENTS = [
   {
-    title: "Nairobi Cybersecurity Awareness Week",
+    title: "Malindi Cybersecurity Awareness Week",
     type: "Workshop",
     date: "Aug 22, 2026",
-    location: "Staken Hub Campus, Nairobi",
+    location: "Staken Hub Campus, Malindi",
     description: "Five days of practical sessions on phishing, identity, and incident response for working professionals.",
   },
   {
