@@ -135,25 +135,11 @@ function ApplyPage() {
 
               {selectedProgramme === "Programming Languages (C++ & Python)" && (
                 <div className="animate-fade-in space-y-3">
-                  <label className="block text-sm font-semibold text-primary">Preferred Programming Language Track</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                    {[
-                      { label: "Python", value: "Python" },
-                      { label: "C++", value: "C++" },
-                      { label: "Both C++ & Python", value: "Both" },
-                    ].map((opt) => (
-                      <label key={opt.value} className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border cursor-pointer hover:border-mint hover:bg-primary-soft/40">
-                        <input
-                          type="radio"
-                          name="programmingLanguage"
-                          value={opt.value}
-                          defaultChecked={opt.value === "Python"}
-                          disabled={isSubmitting}
-                          className="accent-primary"
-                        />
-                        {opt.label}
-                      </label>
-                    ))}
+                  <div className="p-4 rounded-xl bg-primary-soft/30 border border-primary/10 text-sm">
+                    <p className="font-semibold text-primary mb-1">C++ & Python Programming Bootcamp</p>
+                    <p className="text-muted-foreground leading-relaxed text-xs">
+                      This 4-week cohort starting July 01, 2026 covers both Python and C++. Students will study both languages to build a strong foundation in computational thinking and programming logic.
+                    </p>
                   </div>
                 </div>
               )}
