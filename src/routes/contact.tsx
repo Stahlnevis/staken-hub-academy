@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
-import { Mail, Phone, MapPin, MessageCircle, Send } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, Send, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -28,10 +28,12 @@ const ContactSchema = z.object({
 function ContactPage() {
   const [status, setStatus] = useState<null | "ok" | "err">(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const form = new FormData(formElement);
     const parsed = ContactSchema.safeParse(Object.fromEntries(form));
     if (!parsed.success) {
       const errs: Record<string, string> = {};
@@ -41,8 +43,40 @@ function ContactPage() {
       return;
     }
     setErrors({});
-    setStatus("ok");
-    e.currentTarget.reset();
+    setIsSubmitting(true);
+    setStatus(null);
+
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "";
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: accessKey || "YOUR_WEB3FORMS_ACCESS_KEY_HERE",
+          subject: `New Contact Enquiry - ${parsed.data.subject}`,
+          from_name: "Staken Hub Contact Alert",
+          ...parsed.data,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setStatus("ok");
+        formElement.reset();
+      } else {
+        console.error("Web3Forms submission failed:", result);
+        setStatus("err");
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      setStatus("err");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -93,10 +127,10 @@ function ContactPage() {
             <h2 className="font-display font-bold text-2xl text-primary">Send us a message</h2>
 
             <div className="grid sm:grid-cols-2 gap-5">
-              <Field name="name" label="Full name" error={errors.name} />
-              <Field name="email" label="Email" type="email" error={errors.email} />
+              <Field name="name" label="Full name" error={errors.name} disabled={isSubmitting} />
+              <Field name="email" label="Email" type="email" error={errors.email} disabled={isSubmitting} />
             </div>
-            <Field name="subject" label="Subject" error={errors.subject} />
+            <Field name="subject" label="Subject" error={errors.subject} disabled={isSubmitting} />
             <div>
               <label className="block text-sm font-semibold text-primary mb-2" htmlFor="message">Message</label>
               <textarea
@@ -104,19 +138,32 @@ function ContactPage() {
                 name="message"
                 rows={5}
                 maxLength={1500}
-                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30"
+                disabled={isSubmitting}
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30 disabled:opacity-50"
               />
               {errors.message && <p className="mt-1 text-xs text-destructive">{errors.message}</p>}
             </div>
 
             <button
               type="submit"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3.5 rounded-xl font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3.5 rounded-xl font-semibold hover:bg-teal-deep transition-colors shadow-elegant disabled:opacity-70"
             >
-              Send Message <Send className="size-4" />
+              {isSubmitting ? (
+                <>
+                  Sending... <Loader2 className="size-4 animate-spin" />
+                </>
+              ) : (
+                <>
+                  Send Message <Send className="size-4" />
+                </>
+              )}
             </button>
             {status === "ok" && (
-              <p className="text-sm text-primary font-medium">Thanks — we'll be in touch within one business day.</p>
+              <p className="text-sm text-primary font-medium">Thanks — your message has been sent. We'll be in touch within one business day.</p>
+            )}
+            {status === "err" && Object.keys(errors).length === 0 && (
+              <p className="text-sm text-destructive font-medium">Failed to send message. Please verify your connection and try again.</p>
             )}
           </form>
         </div>
@@ -125,7 +172,19 @@ function ContactPage() {
   );
 }
 
-function Field({ name, label, type = "text", error }: { name: string; label: string; type?: string; error?: string }) {
+function Field({
+  name,
+  label,
+  type = "text",
+  error,
+  disabled,
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  error?: string;
+  disabled?: boolean;
+}) {
   return (
     <div>
       <label htmlFor={name} className="block text-sm font-semibold text-primary mb-2">{label}</label>
@@ -134,7 +193,8 @@ function Field({ name, label, type = "text", error }: { name: string; label: str
         name={name}
         type={type}
         maxLength={255}
-        className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30"
+        disabled={disabled}
+        className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30 disabled:opacity-50"
       />
       {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
     </div>

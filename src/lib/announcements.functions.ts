@@ -13,14 +13,16 @@ export type AnnouncementListItem = {
 };
 
 // Public: list announcements with freshly-signed image URLs.
-// Uses admin client server-side only to (a) read rows and (b) sign storage URLs.
+// Uses admin client server-side only to (a) read rows and (b) sign storage URLs if service role key is available.
+// Otherwise, falls back to the public supabase client and public URLs to prevent local crashes.
 export const listAnnouncements = createServerFn({ method: "GET" }).handler(
   async (): Promise<AnnouncementListItem[]> => {
-    const { supabaseAdmin } = await import(
-      "@/integrations/supabase/client.server"
-    );
+    const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const client = hasServiceKey
+      ? (await import("@/integrations/supabase/client.server")).supabaseAdmin
+      : (await import("@/integrations/supabase/client")).supabase;
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await client
       .from("announcements")
       .select(
         "id, title, description, image_url, event_date, cta_label, cta_url, created_at",
@@ -31,16 +33,27 @@ export const listAnnouncements = createServerFn({ method: "GET" }).handler(
     if (!data || data.length === 0) return [];
 
     const paths = data.map((r) => r.image_url);
-    const { data: signed, error: signErr } = await supabaseAdmin.storage
-      .from("posters")
-      .createSignedUrls(paths, 60 * 60 * 24); // 24h
-
-    if (signErr) throw new Error(signErr.message);
-
     const byPath = new Map<string, string>();
-    signed?.forEach((s, i) => {
-      if (s.signedUrl) byPath.set(paths[i], s.signedUrl);
-    });
+
+    try {
+      const { data: signed, error: signErr } = await client.storage
+        .from("posters")
+        .createSignedUrls(paths, 60 * 60 * 24); // 24h
+
+      if (signErr) {
+        throw new Error(signErr.message);
+      }
+
+      signed?.forEach((s, i) => {
+        if (s.signedUrl) byPath.set(paths[i], s.signedUrl);
+      });
+    } catch (err) {
+      console.warn("[Supabase] Failed to create signed URLs, falling back to public URLs:", err);
+      paths.forEach((p) => {
+        const { data: { publicUrl } } = client.storage.from("posters").getPublicUrl(p);
+        byPath.set(p, publicUrl);
+      });
+    }
 
     return data.map((r) => ({
       ...r,
