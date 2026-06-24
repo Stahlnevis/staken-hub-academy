@@ -95,7 +95,10 @@ function AboutPage() {
                 />
               </div>
               <h3 className="font-display font-bold text-lg text-primary">Kensab Collection</h3>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">Industry & Creative Partner</p>
+              <p className="text-xs text-mint font-semibold uppercase tracking-wider mt-1">E-Commerce & Placement Partner</p>
+              <p className="text-sm text-muted-foreground text-center mt-3 leading-relaxed">
+                A strategic partnership providing our graduates with direct pathways to remote online employment, digital trade coordination, and global dropshipping operations.
+              </p>
             </div>
           </div>
         </div>
