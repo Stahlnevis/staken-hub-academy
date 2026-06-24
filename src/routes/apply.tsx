@@ -93,7 +93,7 @@ function ApplyPage() {
               <div className="space-y-2">
                 <h3 className="font-display font-bold text-2xl sm:text-3xl text-primary">Application Submitted!</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Thank you for applying. We have received your application and sent a copy to our admissions team at <span className="font-semibold text-primary">admissions@stakenhub.com</span>. We will reach out to you shortly.
+                  Thank you for applying. We have received your application. Your login credentials will be sent to your email address shortly so you can log into your student portal. Our admissions team at <span className="font-semibold text-primary">admissions@stakenhub.com</span> will also reach out to you soon.
                 </p>
               </div>
               <div className="pt-4">
