@@ -13,35 +13,58 @@ export type Programme = {
 
 export const PROGRAMMES: Programme[] = [
   {
-    slug: "programming-languages",
-    title: "Programming Languages (C++ & Python)",
-    description: "Learn industry-standard programming with Python and C++ through hands-on, project-based tracks.",
+    slug: "cybersecurity",
+    title: "Cybersecurity",
+    description: "Master ethical hacking, network defense, and threat intelligence to protect digital infrastructure.",
+    duration: "16 Weeks",
+    level: "Intermediate",
+    icon: Shield,
+  },
+  {
+    slug: "networking",
+    title: "Networking",
+    description: "Understand network architecture, routing protocols, and hardware configuration for modern networks.",
     duration: "12 Weeks",
+    level: "Beginner",
+    icon: Globe2,
+  },
+  {
+    slug: "programming-languages",
+    title: "Programming Languages",
+    description: "Learn industry-standard programming with Python and C++ through hands-on, project-based tracks.",
+    duration: "4 Weeks",
     level: "Beginner",
     icon: Code2,
   },
   {
-    slug: "robotics",
-    title: "Robotics",
-    description: "Design, build, and program interactive robots while learning electronics and hardware fundamentals.",
-    duration: "10 Weeks",
-    level: "Beginner",
-    icon: Cpu,
+    slug: "ai-awareness",
+    title: "Artificial Intelligence Awareness",
+    description: "Understand LLMs, prompt engineering, and responsible AI use across business and society.",
+    duration: "6 Weeks",
+    level: "All Levels",
+    icon: Brain,
   },
   {
-    slug: "coding-for-kids",
-    title: "Coding for Kids",
-    description: "A fun and interactive introduction to visual programming, logical thinking, and creative coding for younger learners.",
+    slug: "digital-literacy",
+    title: "Digital Literacy",
+    description: "Foundational computer, productivity, and online safety skills for the modern workplace.",
     duration: "8 Weeks",
     level: "Beginner",
     icon: GraduationCap,
   },
+  {
+    slug: "robotics-coding-for-kids",
+    title: "Robotics and Coding for Kids",
+    description: "A fun, hands-on introduction to Scratch coding, logical thinking, electronics, and building simple interactive robots.",
+    duration: "2 Weeks",
+    level: "Beginner",
+    icon: Bot,
+  },
 ];
 
 export const COHORTS = [
-  { programme: "Programming Languages (C++ & Python)", date: "September 15, 2026", duration: "12 Weeks • Hybrid", mode: "Hybrid" },
-  { programme: "Robotics", date: "October 02, 2026", duration: "10 Weeks • Hybrid", mode: "Hybrid" },
-  { programme: "Coding for Kids", date: "October 14, 2026", duration: "8 Weeks • Weekends", mode: "Online" },
+  { programme: "Programming Languages (C++ & Python)", date: "July 01, 2026", duration: "4 Weeks • Hybrid", mode: "Hybrid" },
+  { programme: "Robotics and Coding for Kids", date: "August Holiday, 2026", duration: "2 Weeks • Weekends", mode: "Online" },
 ];
 
 export const EVENTS = [

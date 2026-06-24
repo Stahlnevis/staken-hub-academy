@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
-import { ArrowRight, ShieldCheck, Brain, Code2, Sparkles } from "lucide-react";
+import { ArrowRight, ShieldCheck, Brain, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/corporate")({
   head: () => ({
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/corporate")({
       {
         name: "description",
         content:
-          "Customised corporate training in cybersecurity awareness, AI literacy, programming and digital upskilling.",
+          "Customised corporate training in cybersecurity awareness, AI literacy, and digital upskilling.",
       },
       { property: "og:title", content: "Corporate Training — Staken Hub Academy" },
       { property: "og:description", content: "Upskill your team for the AI era." },
@@ -23,7 +23,6 @@ export const Route = createFileRoute("/corporate")({
 const OFFERINGS = [
   { Icon: ShieldCheck, t: "Cybersecurity Awareness", d: "Train every employee to recognise phishing, social engineering and account takeover." },
   { Icon: Brain, t: "AI Literacy", d: "Teams learn to use LLMs responsibly and productively in everyday work." },
-  { Icon: Code2, t: "Programming", d: "Foundational and advanced coding tracks for technical and semi-technical staff." },
   { Icon: Sparkles, t: "Digital Upskilling", d: "Modern productivity, collaboration and data literacy at scale." },
 ];
 
@@ -36,7 +35,7 @@ function CorporatePage() {
         subtitle="Customised programmes for organisations across Africa — delivered online, on-site or hybrid."
       />
       <section className="py-20">
-        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid sm:grid-cols-2 gap-6">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {OFFERINGS.map(({ Icon, t, d }) => (
             <div key={t} className="bg-card border border-border rounded-2xl p-8">
               <div className="size-12 rounded-xl bg-primary-soft text-primary grid place-items-center mb-5">

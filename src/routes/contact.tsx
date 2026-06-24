@@ -92,9 +92,9 @@ function ContactPage() {
           <div className="space-y-6">
             {[
               { Icon: Mail, t: "Email", v: "admissions@stakenhub.com", href: "mailto:admissions@stakenhub.com" },
-              { Icon: Phone, t: "Phone", v: "+254 712 345 678" },
-              { Icon: MessageCircle, t: "WhatsApp", v: "+254 712 345 678", href: "https://wa.me/254712345678" },
-              { Icon: MapPin, t: "Visit", v: "Malindi, Kenya" },
+              { Icon: Phone, t: "Phone", v: "0795209002 / 0759111854" },
+              { Icon: MessageCircle, t: "WhatsApp", v: "0795209002 / 0759111854", href: "https://wa.me/254795209002" },
+              { Icon: MapPin, t: "Visit", v: "Nairobi, Kenya" },
             ].map(({ Icon, t, v, href }) => (
               <a
                 key={t}
@@ -116,7 +116,7 @@ function ContactPage() {
             <div className="rounded-2xl overflow-hidden border border-border shadow-soft aspect-[16/10]">
               <iframe
                 title="Staken Hub Academy location"
-                src="https://www.google.com/maps?q=Malindi%2C%20Kenya&output=embed"
+                src="https://www.google.com/maps?q=Nairobi%2C%20Kenya&output=embed"
                 loading="lazy"
                 className="w-full h-full border-0"
               />

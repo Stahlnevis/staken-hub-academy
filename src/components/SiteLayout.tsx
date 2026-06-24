@@ -201,9 +201,12 @@ export function SiteFooter() {
         <div>
           <h4 className="font-display font-bold text-base mb-5">Programmes</h4>
           <ul className="space-y-3 text-sm text-primary-foreground/75">
+            <li><Link to="/programmes" className="hover:text-mint">Cybersecurity</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">Networking</Link></li>
             <li><Link to="/programmes" className="hover:text-mint">Programming Languages</Link></li>
-            <li><Link to="/programmes" className="hover:text-mint">Robotics</Link></li>
-            <li><Link to="/programmes" className="hover:text-mint">Coding for Kids</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">AI Awareness</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">Digital Literacy</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">Robotics & Coding for Kids</Link></li>
           </ul>
         </div>
 
@@ -223,8 +226,8 @@ export function SiteFooter() {
           <h4 className="font-display font-bold text-base mb-5">Get in Touch</h4>
           <ul className="space-y-3 text-sm text-primary-foreground/75">
             <li className="flex items-start gap-2.5"><Mail className="size-4 mt-0.5 shrink-0 text-mint" /> admissions@stakenhub.com</li>
-            <li className="flex items-start gap-2.5"><Phone className="size-4 mt-0.5 shrink-0 text-mint" /> +254 712 345 678</li>
-            <li className="flex items-start gap-2.5"><MapPin className="size-4 mt-0.5 shrink-0 text-mint" /> Malindi, Kenya</li>
+            <li className="flex items-start gap-2.5"><Phone className="size-4 mt-0.5 shrink-0 text-mint" /> 0795209002 / 0759111854</li>
+            <li className="flex items-start gap-2.5"><MapPin className="size-4 mt-0.5 shrink-0 text-mint" /> Nairobi, Kenya</li>
           </ul>
         </div>
       </div>

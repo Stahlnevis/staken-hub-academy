@@ -9,7 +9,7 @@ export const Route = createFileRoute("/programmes")({
       {
         name: "description",
         content:
-          "Explore our specialised programmes in Programming Languages (C++ & Python), Robotics, and Coding for Kids.",
+          "Explore our specialised programmes in Cybersecurity, Networking, Programming Languages, AI Awareness, Digital Literacy, and Robotics & Coding for Kids.",
       },
       { property: "og:title", content: "Programmes — Staken Hub Academy" },
       { property: "og:description", content: "Specialised tracks for the digital economy." },

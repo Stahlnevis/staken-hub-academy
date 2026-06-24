@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
-import { PROGRAMMES } from "@/lib/programmes";
+import { COHORTS } from "@/lib/programmes";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { useState } from "react";
 
@@ -21,6 +21,8 @@ export const Route = createFileRoute("/apply")({
 function ApplyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
+  const [hasCoupon, setHasCoupon] = useState<"yes" | "no">("no");
+  const [selectedProgramme, setSelectedProgramme] = useState(COHORTS[0]?.programme || "");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -120,14 +122,68 @@ function ApplyPage() {
                 <label className="block text-sm font-semibold text-primary mb-2">Programme of interest</label>
                 <select
                   name="programme"
+                  value={selectedProgramme}
+                  onChange={(e) => setSelectedProgramme(e.target.value)}
                   disabled={isSubmitting}
                   className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30 disabled:opacity-50"
                 >
-                  {PROGRAMMES.map((p) => (
-                    <option key={p.slug} value={p.title}>{p.title}</option>
+                  {COHORTS.map((c) => (
+                    <option key={c.programme} value={c.programme}>{c.programme}</option>
                   ))}
                 </select>
               </div>
+
+              {selectedProgramme === "Programming Languages (C++ & Python)" && (
+                <div className="animate-fade-in space-y-3">
+                  <label className="block text-sm font-semibold text-primary">Preferred Programming Language Track</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                    {[
+                      { label: "Python", value: "Python" },
+                      { label: "C++", value: "C++" },
+                      { label: "Both C++ & Python", value: "Both" },
+                    ].map((opt) => (
+                      <label key={opt.value} className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border cursor-pointer hover:border-mint hover:bg-primary-soft/40">
+                        <input
+                          type="radio"
+                          name="programmingLanguage"
+                          value={opt.value}
+                          defaultChecked={opt.value === "Python"}
+                          disabled={isSubmitting}
+                          className="accent-primary"
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedProgramme === "Robotics and Coding for Kids" && (
+                <div className="animate-fade-in space-y-5">
+                  <div className="p-4 rounded-xl bg-primary-soft/30 border border-primary/10 text-sm">
+                    <p className="font-semibold text-primary mb-1">Scratch Coding & Robotics Info</p>
+                    <p className="text-muted-foreground leading-relaxed text-xs">
+                      This 2-week weekend course is designed specifically for kids (using Scratch coding, logical thinking, and building simple interactive robots).
+                    </p>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <Input
+                      name="childName"
+                      label="Child's Name"
+                      placeholder="Enter child's full name"
+                      disabled={isSubmitting}
+                      required={true}
+                    />
+                    <Input
+                      name="childAge"
+                      label="Child's Age"
+                      placeholder="e.g. 10 years"
+                      disabled={isSubmitting}
+                      required={true}
+                    />
+                  </div>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-semibold text-primary mb-2">Preferred learning mode</label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
@@ -139,6 +195,39 @@ function ApplyPage() {
                   ))}
                 </div>
               </div>
+              <div>
+                <label className="block text-sm font-semibold text-primary mb-2">Applying with a coupon code?</label>
+                <div className="grid grid-cols-2 gap-3 text-sm max-w-xs">
+                  {[
+                    { label: "No", value: "no" },
+                    { label: "Yes", value: "yes" },
+                  ].map((opt) => (
+                    <label key={opt.value} className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border cursor-pointer hover:border-mint hover:bg-primary-soft/40">
+                      <input
+                        type="radio"
+                        name="hasCoupon"
+                        value={opt.value}
+                        checked={hasCoupon === opt.value}
+                        onChange={() => setHasCoupon(opt.value as "yes" | "no")}
+                        className="accent-primary"
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {hasCoupon === "yes" && (
+                <div className="animate-fade-in">
+                  <Input
+                    name="couponCode"
+                    label="Coupon Code"
+                    placeholder="Enter your coupon code"
+                    disabled={isSubmitting}
+                    required={true}
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-semibold text-primary mb-2">Tell us about your goals</label>
                 <textarea
@@ -181,11 +270,15 @@ function Input({
   label,
   type = "text",
   disabled,
+  required = true,
+  placeholder,
 }: {
   name: string;
   label: string;
   type?: string;
   disabled?: boolean;
+  required?: boolean;
+  placeholder?: string;
 }) {
   return (
     <div>
@@ -195,7 +288,8 @@ function Input({
         name={name}
         type={type}
         maxLength={255}
-        required
+        required={required}
+        placeholder={placeholder}
         disabled={disabled}
         className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30 disabled:opacity-50"
       />
