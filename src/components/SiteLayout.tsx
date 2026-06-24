@@ -201,11 +201,9 @@ export function SiteFooter() {
         <div>
           <h4 className="font-display font-bold text-base mb-5">Programmes</h4>
           <ul className="space-y-3 text-sm text-primary-foreground/75">
-            <li><Link to="/programmes" className="hover:text-mint">Cybersecurity</Link></li>
-            <li><Link to="/programmes" className="hover:text-mint">Software Development</Link></li>
-            <li><Link to="/programmes" className="hover:text-mint">Data Science & AI</Link></li>
-            <li><Link to="/programmes" className="hover:text-mint">UI/UX Design</Link></li>
-            <li><Link to="/programmes" className="hover:text-mint">Robotics for Kids</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">Programming Languages</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">Robotics</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">Coding for Kids</Link></li>
           </ul>
         </div>
 
