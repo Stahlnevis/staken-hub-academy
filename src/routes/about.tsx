@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
 import { Target, Eye, Heart, Award } from "lucide-react";
+import kensabLogo from "@/assets/kensab-logo.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -74,6 +75,29 @@ function AboutPage() {
           >
             Join the next cohort
           </Link>
+        </div>
+      </section>
+
+      <section className="py-20 bg-background border-t border-border/40">
+        <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 text-center">
+          <span className="text-mint font-semibold uppercase tracking-wider text-sm">Partnerships</span>
+          <h2 className="font-display font-bold text-3xl md:text-4xl text-primary mt-2 mb-4">Our Collaborators</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-12">
+            We partner with industry-leading organizations to provide our students with practical internship opportunities, collaborative projects, and industry placement.
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-8">
+            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-soft hover:shadow-medium hover:border-primary/25 transition-all duration-300 group max-w-sm flex flex-col items-center">
+              <div className="h-28 w-64 flex items-center justify-center mb-4 overflow-hidden rounded-xl bg-white p-3 border border-border/40 shadow-sm">
+                <img
+                  src={kensabLogo}
+                  alt="Kensab Collection Logo"
+                  className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+              <h3 className="font-display font-bold text-lg text-primary">Kensab Collection</h3>
+              <p className="text-xs text-muted-foreground mt-1 font-medium">Industry & Creative Partner</p>
+            </div>
+          </div>
         </div>
       </section>
     </SiteLayout>

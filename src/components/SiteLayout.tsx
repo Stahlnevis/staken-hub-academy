@@ -13,7 +13,7 @@ import {
   User,
   ChevronDown,
 } from "lucide-react";
-import logoAsset from "@/assets/staken-hub-logo-teal.png.asset.json";
+import logoTeal from "@/assets/staken-hub-logo-teal.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,7 +83,7 @@ function Logo() {
     <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0">
       <div className="size-9 sm:size-10 overflow-hidden relative shrink-0">
         <img
-          src={logoAsset.url}
+          src={logoTeal}
           alt="Staken Hub Academy Logo"
           className="h-[155%] w-auto max-w-none absolute top-0 left-1/2 -translate-x-1/2 object-contain"
         />
@@ -170,7 +170,7 @@ export function SiteFooter() {
           <div className="flex items-center gap-2.5 mb-5">
             <div className="bg-white rounded-lg p-1 size-10 overflow-hidden relative flex items-center justify-center">
               <img
-                src={logoAsset.url}
+                src={logoTeal}
                 alt="Staken Hub Academy Logo"
                 className="h-[155%] w-auto max-w-none absolute top-0 left-1/2 -translate-x-1/2 object-contain"
               />
