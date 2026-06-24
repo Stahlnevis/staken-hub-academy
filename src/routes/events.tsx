@@ -39,6 +39,94 @@ export const Route = createFileRoute("/events")({
 
 type Bucket = "previous" | "current" | "future";
 
+const STATIC_PROGRAMME_EVENTS = [
+  // Previous (completed) programmes
+  {
+    id: "prev-1",
+    title: "Digital Literacy",
+    description: "Foundational computer skills, workplace productivity software, and digital communication basics.",
+    category: "previous" as const,
+    event_date: "2026-04-10",
+    signed_image_url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "View Program Details"
+  },
+  {
+    id: "prev-2",
+    title: "Artificial Intelligence Awareness",
+    description: "Introductory sessions on generative AI tools, prompt optimization, and AI applications in day-to-day work.",
+    category: "previous" as const,
+    event_date: "2026-05-15",
+    signed_image_url: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "View Program Details"
+  },
+  {
+    id: "prev-3",
+    title: "Networking",
+    description: "Overview of corporate networking architectures, switching/routing basics, and IP routing configuration.",
+    category: "previous" as const,
+    event_date: "2026-06-01",
+    signed_image_url: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "View Program Details"
+  },
+
+  // Current programmes
+  {
+    id: "curr-1",
+    title: "Cybersecurity",
+    description: "Intensive training in cyber defense strategies, threat detection, penetration testing, and ethical hacking protocols.",
+    category: "current" as const,
+    event_date: null,
+    signed_image_url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "Apply to Join"
+  },
+  {
+    id: "curr-2",
+    title: "Programming Languages",
+    description: "Foundational programming bootcamp training in logical design, algorithm setup, and program testing.",
+    category: "current" as const,
+    event_date: null,
+    signed_image_url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "Apply to Join"
+  },
+  {
+    id: "curr-3",
+    title: "Software Engineering",
+    description: "Full-stack software construction bootcamp covering modern front-end/back-end libraries, databases, and APIs.",
+    category: "current" as const,
+    event_date: null,
+    signed_image_url: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "Apply to Join"
+  },
+
+  // Future programmes
+  {
+    id: "fut-1",
+    title: "Programming Languages (C++ & Python)",
+    description: "Upcoming 4-week cohort launching July 01, 2026. Get hands-on with basic logic, algorithm layout, and programming concepts in Python and C++.",
+    category: "future" as const,
+    event_date: "2026-07-01",
+    signed_image_url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "Apply Now"
+  },
+  {
+    id: "fut-2",
+    title: "Robotics and Coding for Kids",
+    description: "Weekend workshops starting August Holiday, 2026. A creative course introducing youth to Scratch coding, computational logic, and basic electronics.",
+    category: "future" as const,
+    event_date: "2026-08-01",
+    signed_image_url: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
+    cta_url: "/apply",
+    cta_label: "Apply Now"
+  }
+];
+
 function bucketFor(eventDate: string | null): Bucket {
   if (!eventDate) return "current";
   const today = new Date();
@@ -78,7 +166,26 @@ function EventsPage() {
       current: [],
       future: [],
     };
-    posters.forEach((p) => g[bucketFor(p.event_date)].push(p));
+
+    // Add static default events first
+    STATIC_PROGRAMME_EVENTS.forEach((item) => {
+      g[item.category].push({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        event_date: item.event_date,
+        signed_image_url: item.signed_image_url,
+        cta_url: item.cta_url,
+        cta_label: item.cta_label,
+      } as any);
+    });
+
+    // Merge in dynamic posters
+    posters.forEach((p) => {
+      const bucket = bucketFor(p.event_date);
+      g[bucket].push(p);
+    });
+
     // future: earliest first; previous: most recent first; current: newest first
     g.future.sort(
       (a, b) =>
@@ -86,6 +193,11 @@ function EventsPage() {
         new Date(b.event_date ?? 0).getTime(),
     );
     g.previous.sort(
+      (a, b) =>
+        new Date(b.event_date ?? 0).getTime() -
+        new Date(a.event_date ?? 0).getTime(),
+    );
+    g.current.sort(
       (a, b) =>
         new Date(b.event_date ?? 0).getTime() -
         new Date(a.event_date ?? 0).getTime(),
@@ -155,7 +267,7 @@ function EventsPage() {
                 key={p.id}
                 className="group bg-card rounded-2xl overflow-hidden border border-border shadow-elegant hover:shadow-xl transition-all flex flex-col"
               >
-                <div className="aspect-[3/4] bg-muted overflow-hidden">
+                <div className="aspect-[16/10] bg-muted overflow-hidden">
                   <img
                     src={p.signed_image_url}
                     alt={p.title}

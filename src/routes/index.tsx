@@ -114,7 +114,7 @@ function HomePage() {
           <div className="relative animate-fade-in-up">
             <div className="absolute -top-12 -right-12 size-56 bg-mint/30 rounded-full blur-3xl" />
             <div className="absolute -bottom-12 -left-12 size-56 bg-primary/15 rounded-full blur-3xl" />
-            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden ring-1 ring-primary/10 shadow-elegant">
+            <div className="relative aspect-[3/2] rounded-3xl overflow-hidden ring-1 ring-primary/10 shadow-elegant">
               <img
                 src={heroImage}
                 alt="African tech students collaborating in a modern Staken Hub Academy lab"

@@ -144,16 +144,6 @@ function ApplyPage() {
                 </select>
               </div>
 
-              {selectedProgramme === "Programming Languages (C++ & Python)" && (
-                <div className="animate-fade-in space-y-3">
-                  <div className="p-4 rounded-xl bg-primary-soft/30 border border-primary/10 text-sm">
-                    <p className="font-semibold text-primary mb-1">C++ & Python Programming Bootcamp</p>
-                    <p className="text-muted-foreground leading-relaxed text-xs">
-                      This 4-week cohort starting July 01, 2026 covers both Python and C++. Students will study both languages to build a strong foundation in computational thinking and programming logic.
-                    </p>
-                  </div>
-                </div>
-              )}
 
               {selectedProgramme === "Robotics and Coding for Kids" && (
                 <div className="animate-fade-in space-y-5">

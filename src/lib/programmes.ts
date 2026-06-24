@@ -1,5 +1,5 @@
 import {
-  Shield, Code2, Cpu, Brain, BarChart3, Globe2, Smartphone, Palette, Bot, GraduationCap,
+  Shield, Code2, Cpu, Brain, BarChart3, Globe2, Smartphone, Palette, Bot, GraduationCap, Laptop,
 } from "lucide-react";
 
 export type Programme = {
@@ -59,6 +59,14 @@ export const PROGRAMMES: Programme[] = [
     duration: "2 Weeks",
     level: "Beginner",
     icon: Bot,
+  },
+  {
+    slug: "software-engineering",
+    title: "Software Engineering",
+    description: "Learn full-stack software development, modern web architectures, API integration, and cloud deployment pipelines.",
+    duration: "16 Weeks",
+    level: "Intermediate",
+    icon: Laptop,
   },
 ];
 

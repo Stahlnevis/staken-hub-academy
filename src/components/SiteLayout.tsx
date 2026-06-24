@@ -204,6 +204,7 @@ export function SiteFooter() {
             <li><Link to="/programmes" className="hover:text-mint">Cybersecurity</Link></li>
             <li><Link to="/programmes" className="hover:text-mint">Networking</Link></li>
             <li><Link to="/programmes" className="hover:text-mint">Programming Languages</Link></li>
+            <li><Link to="/programmes" className="hover:text-mint">Software Engineering</Link></li>
             <li><Link to="/programmes" className="hover:text-mint">AI Awareness</Link></li>
             <li><Link to="/programmes" className="hover:text-mint">Digital Literacy</Link></li>
             <li><Link to="/programmes" className="hover:text-mint">Robotics & Coding for Kids</Link></li>
