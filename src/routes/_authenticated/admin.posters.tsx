@@ -183,7 +183,7 @@ function AdminPostersPage() {
           </p>
           <div className="flex gap-3 justify-center">
             <Link
-              to="/announcements"
+              to="/events"
               className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-muted"
             >
               <ArrowLeft className="size-4" /> Back
@@ -303,7 +303,7 @@ function AdminPostersPage() {
               Published ({rows.length})
             </h2>
             <Link
-              to="/announcements"
+              to="/events"
               className="text-sm text-primary hover:underline"
             >
               View public page →
