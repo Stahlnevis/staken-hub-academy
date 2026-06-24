@@ -23,6 +23,7 @@ function ApplyPage() {
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
   const [hasCoupon, setHasCoupon] = useState<"yes" | "no">("no");
   const [selectedProgramme, setSelectedProgramme] = useState(COHORTS[0]?.programme || "");
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,6 +32,16 @@ function ApplyPage() {
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+
+    if (hasCoupon === "yes") {
+      const code = String(data.couponCode || "").trim();
+      if (code !== "SKH-0110-2026/^#$") {
+        setCouponError("Invalid coupon code. You will not be able to submit this application without the correct coupon code.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
+    setCouponError(null);
 
     // Use environment variable or fallback to placeholder
     const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "";
@@ -194,7 +205,10 @@ function ApplyPage() {
                         name="hasCoupon"
                         value={opt.value}
                         checked={hasCoupon === opt.value}
-                        onChange={() => setHasCoupon(opt.value as "yes" | "no")}
+                        onChange={() => {
+                          setHasCoupon(opt.value as "yes" | "no");
+                          setCouponError(null);
+                        }}
                         className="accent-primary"
                       />
                       {opt.label}
@@ -204,14 +218,21 @@ function ApplyPage() {
               </div>
 
               {hasCoupon === "yes" && (
-                <div className="animate-fade-in">
+                <div className="animate-fade-in space-y-2">
                   <Input
                     name="couponCode"
                     label="Coupon Code"
                     placeholder="Enter your coupon code"
                     disabled={isSubmitting}
                     required={true}
+                    onChange={() => setCouponError(null)}
                   />
+                  {couponError && (
+                    <p className="text-destructive text-xs font-semibold flex items-center gap-1.5 mt-1.5 animate-fade-in">
+                      <AlertCircle className="size-4 shrink-0" />
+                      {couponError}
+                    </p>
+                  )}
                 </div>
               )}
               <div>
@@ -258,6 +279,7 @@ function Input({
   disabled,
   required = true,
   placeholder,
+  ...props
 }: {
   name: string;
   label: string;
@@ -265,6 +287,7 @@ function Input({
   disabled?: boolean;
   required?: boolean;
   placeholder?: string;
+  [key: string]: any;
 }) {
   return (
     <div>
@@ -278,6 +301,7 @@ function Input({
         placeholder={placeholder}
         disabled={disabled}
         className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30 disabled:opacity-50"
+        {...props}
       />
     </div>
   );
