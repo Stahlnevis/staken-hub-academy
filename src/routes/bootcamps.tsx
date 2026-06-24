@@ -10,7 +10,7 @@ export const Route = createFileRoute("/bootcamps")({
       {
         name: "description",
         content:
-          "Intensive, full-time and weekend bootcamps to launch your career in tech in weeks, not years.",
+          "Intensive bootcamps to launch your career in tech in weeks, not years.",
       },
       { property: "og:title", content: "Bootcamps — Staken Hub Academy" },
       { property: "og:description", content: "Career-launch bootcamps in cybersecurity, code and AI." },

@@ -166,7 +166,7 @@ function HomePage() {
             {[
               { t: "Hands-on Learning", d: "Build production-grade projects from week one." },
               { t: "Industry Mentors", d: "1:1 access to senior engineers and designers." },
-              { t: "Flexible Modes", d: "Online, hybrid and weekend bootcamps." },
+              { t: "Flexible Modes", d: "Online, hybrid and bootcamps." },
               { t: "Career Guidance", d: "Mock interviews, portfolio reviews, and placement." },
               { t: "Practical Projects", d: "Live client briefs and capstone case studies." },
               { t: "Certified Graduates", d: "Industry-recognised certification on completion." },
@@ -204,7 +204,7 @@ function HomePage() {
             {[
               { Icon: Laptop, t: "Online Classes", d: "Live, interactive sessions from anywhere on the continent." },
               { Icon: Users, t: "Hybrid Learning", d: "Mix online theory with in-person labs and team projects." },
-              { Icon: Sun, t: "Weekend Bootcamps", d: "Intensive upskilling for working professionals." },
+              { Icon: Sun, t: "Bootcamps", d: "Intensive upskilling for working professionals." },
             ].map((m, i) => (
               <div
                 key={m.t}
