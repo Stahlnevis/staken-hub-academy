@@ -26,7 +26,7 @@ function ProgrammesPage() {
       <PageHero
         eyebrow="Programmes"
         title="Specialised tracks for the digital economy"
-        subtitle="Industry-vetted curricula designed to take you from beginner to professional."
+        subtitle="Practical, hands-on training to equip youth with the real-world skills needed for today's digital economy."
       />
       <section className="py-20">
         <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
