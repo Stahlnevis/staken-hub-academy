@@ -93,7 +93,16 @@ function ApplyPage() {
               <div className="space-y-2">
                 <h3 className="font-display font-bold text-2xl sm:text-3xl text-primary">Application Submitted!</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Thank you for applying. We have received your application. Your login credentials will be sent to your email address shortly so you can log into your student portal. Our admissions team at <span className="font-semibold text-primary">admissions@stakenhub.com</span> will also reach out to you soon.
+                  Thank you for applying. We have received your application. Your login credentials will be sent to your email address shortly so you can log into your{" "}
+                  <a
+                    href="https://academy.stakenhub.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    academy portal
+                  </a>
+                  . Our admissions team at <span className="font-semibold text-primary">admissions@stakenhub.com</span> will also reach out to you soon.
                 </p>
               </div>
               <div className="pt-4">
