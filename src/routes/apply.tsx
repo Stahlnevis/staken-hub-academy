@@ -33,7 +33,7 @@ function ApplyPage() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    if (hasCoupon === "yes") {
+    if (hasCoupon === "yes" && selectedProgramme !== "Robotics and Coding for Kids") {
       const code = String(data.couponCode || "").trim();
       if (code !== "SKH-0110-2026/^#$") {
         setCouponError("Invalid coupon code. You will not be able to submit this application without the correct coupon code.");
@@ -143,7 +143,14 @@ function ApplyPage() {
                 <select
                   name="programme"
                   value={selectedProgramme}
-                  onChange={(e) => setSelectedProgramme(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedProgramme(val);
+                    if (val === "Robotics and Coding for Kids") {
+                      setHasCoupon("no");
+                      setCouponError(null);
+                    }
+                  }}
                   disabled={isSubmitting}
                   className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30 disabled:opacity-50"
                 >
@@ -191,48 +198,52 @@ function ApplyPage() {
                   ))}
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-primary mb-2">Applying with a coupon code?</label>
-                <div className="grid grid-cols-2 gap-3 text-sm max-w-xs">
-                  {[
-                    { label: "No", value: "no" },
-                    { label: "Yes", value: "yes" },
-                  ].map((opt) => (
-                    <label key={opt.value} className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border cursor-pointer hover:border-mint hover:bg-primary-soft/40">
-                      <input
-                        type="radio"
-                        name="hasCoupon"
-                        value={opt.value}
-                        checked={hasCoupon === opt.value}
-                        onChange={() => {
-                          setHasCoupon(opt.value as "yes" | "no");
-                          setCouponError(null);
-                        }}
-                        className="accent-primary"
-                      />
-                      {opt.label}
-                    </label>
-                  ))}
-                </div>
-              </div>
+              {selectedProgramme !== "Robotics and Coding for Kids" && (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-primary mb-2">Applying with a coupon code?</label>
+                    <div className="grid grid-cols-2 gap-3 text-sm max-w-xs">
+                      {[
+                        { label: "No", value: "no" },
+                        { label: "Yes", value: "yes" },
+                      ].map((opt) => (
+                        <label key={opt.value} className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border cursor-pointer hover:border-mint hover:bg-primary-soft/40">
+                          <input
+                            type="radio"
+                            name="hasCoupon"
+                            value={opt.value}
+                            checked={hasCoupon === opt.value}
+                            onChange={() => {
+                              setHasCoupon(opt.value as "yes" | "no");
+                              setCouponError(null);
+                            }}
+                            className="accent-primary"
+                          />
+                          {opt.label}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
 
-              {hasCoupon === "yes" && (
-                <div className="animate-fade-in space-y-2">
-                  <Input
-                    name="couponCode"
-                    label="Coupon Code"
-                    placeholder="Enter your coupon code"
-                    disabled={isSubmitting}
-                    required={true}
-                    onChange={() => setCouponError(null)}
-                  />
-                  {couponError && (
-                    <p className="text-destructive text-xs font-semibold flex items-center gap-1.5 mt-1.5 animate-fade-in">
-                      <AlertCircle className="size-4 shrink-0" />
-                      {couponError}
-                    </p>
+                  {hasCoupon === "yes" && (
+                    <div className="animate-fade-in space-y-2">
+                      <Input
+                        name="couponCode"
+                        label="Coupon Code"
+                        placeholder="Enter your coupon code"
+                        disabled={isSubmitting}
+                        required={true}
+                        onChange={() => setCouponError(null)}
+                      />
+                      {couponError && (
+                        <p className="text-destructive text-xs font-semibold flex items-center gap-1.5 mt-1.5 animate-fade-in">
+                          <AlertCircle className="size-4 shrink-0" />
+                          {couponError}
+                        </p>
+                      )}
+                    </div>
                   )}
-                </div>
+                </>
               )}
               <div>
                 <label className="block text-sm font-semibold text-primary mb-2">Tell us about your goals</label>
