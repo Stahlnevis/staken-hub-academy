@@ -72,7 +72,7 @@ export const PROGRAMMES: Programme[] = [
 
 export const COHORTS = [
   { programme: "Programming Languages (C++ & Python)", date: "July 01, 2026", duration: "4 Weeks • Hybrid", mode: "Hybrid" },
-  { programme: "Robotics and Coding for Kids", date: "August Holiday, 2026", duration: "2 Weeks • Weekends", mode: "Online" },
+  { programme: "Robotics and Coding for Kids", date: "August Holiday, 2026", duration: "2 Weeks • Weekdays", mode: "Online" },
 ];
 
 export const EVENTS = [

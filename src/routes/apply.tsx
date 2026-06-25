@@ -166,7 +166,7 @@ function ApplyPage() {
                   <div className="p-4 rounded-xl bg-primary-soft/30 border border-primary/10 text-sm">
                     <p className="font-semibold text-primary mb-1">Scratch Coding & Robotics Info</p>
                     <p className="text-muted-foreground leading-relaxed text-xs">
-                      This 2-week weekend course is designed specifically for kids (using Scratch coding, logical thinking, and building simple interactive robots).
+                      This 2-week weekday course is designed specifically for kids (using Scratch coding, logical thinking, and building simple interactive robots).
                     </p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-5">

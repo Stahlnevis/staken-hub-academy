@@ -118,7 +118,7 @@ const STATIC_PROGRAMME_EVENTS = [
   {
     id: "fut-2",
     title: "Robotics and Coding for Kids",
-    description: "Weekend workshops starting August Holiday, 2026. A creative course introducing youth to Scratch coding, computational logic, and basic electronics.",
+    description: "Weekday workshops starting August Holiday, 2026. A creative course introducing youth to Scratch coding, computational logic, and basic electronics.",
     category: "future" as const,
     event_date: "2026-08-01",
     signed_image_url: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
