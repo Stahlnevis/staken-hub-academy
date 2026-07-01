@@ -56,10 +56,10 @@ function ContactPage() {
           Accept: "application/json",
         },
         body: JSON.stringify({
+          ...parsed.data,
           access_key: accessKey || "YOUR_WEB3FORMS_ACCESS_KEY_HERE",
           subject: `New Contact Enquiry - ${parsed.data.subject}`,
           from_name: "Staken Hub Contact Alert",
-          ...parsed.data,
         }),
       });
 
