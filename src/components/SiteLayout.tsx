@@ -219,7 +219,7 @@ export function SiteFooter() {
             <li><Link to="/events" className="hover:text-mint">Events & Workshops</Link></li>
             <li><Link to="/corporate" className="hover:text-mint">Corporate Training</Link></li>
             <li><Link to="/apply" className="hover:text-mint">Apply Now</Link></li>
-            <li><Link to="/admin/posters" className="hover:text-mint">Manage Academy</Link></li>
+            
           </ul>
         </div>
 
