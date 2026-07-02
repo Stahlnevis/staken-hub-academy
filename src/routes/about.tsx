@@ -6,7 +6,7 @@ import { DynamicIcon } from "@/components/DynamicIcon";
 
 type Value = { id: string; icon: string | null; title: string; description: string | null };
 type TeamMember = { id: string; name: string; role: string | null; bio: string | null; photo_url: string | null; linkedin_url: string | null };
-type Collaborator = { id: string; name: string; logo_url: string | null; website_url: string | null };
+type Collaborator = { id: string; name: string; logo_url: string | null; website_url: string | null; description: string | null };
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -119,22 +119,32 @@ function AboutPage() {
         <section className="py-16 bg-surface">
           <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 text-center">
             <h2 className="font-display font-bold text-2xl md:text-3xl text-primary mb-10">Our Collaborators</h2>
-            <div className="flex flex-wrap justify-center items-center gap-8">
-              {collaborators.map((c) => (
-                <a
-                  key={c.id}
-                  href={c.website_url ?? "#"}
-                  target={c.website_url ? "_blank" : undefined}
-                  rel="noreferrer"
-                  className="bg-card border border-border rounded-xl px-6 py-4 shadow-soft hover:shadow-medium transition-all"
-                >
-                  {c.logo_url ? (
-                    <img src={c.logo_url} alt={c.name} className="h-12 object-contain" />
-                  ) : (
-                    <span className="font-semibold text-primary">{c.name}</span>
-                  )}
-                </a>
-              ))}
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              {collaborators.map((c) => {
+                const url = c.website_url ? (c.website_url.startsWith("http") ? c.website_url : `https://${c.website_url}`) : undefined;
+                return (
+                  <a
+                    key={c.id}
+                    href={url ?? "#"}
+                    target={url ? "_blank" : undefined}
+                    rel="noreferrer"
+                    className="bg-card border border-border rounded-2xl p-6 shadow-soft hover:shadow-medium transition-all flex flex-col items-center text-center justify-between min-h-[200px] hover:border-mint/30"
+                  >
+                    <div className="h-20 flex items-center justify-center w-full mb-4">
+                      {c.logo_url ? (
+                        <img src={c.logo_url} alt={c.name} className="max-h-full max-w-full object-contain" />
+                      ) : (
+                        <span className="font-semibold text-primary text-lg">{c.name}</span>
+                      )}
+                    </div>
+                    {c.description && (
+                      <p className="text-xs text-muted-foreground line-clamp-3 mt-2 leading-relaxed">
+                        {c.description}
+                      </p>
+                    )}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>

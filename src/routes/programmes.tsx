@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
+import * as LucideIcons from "lucide-react";
 import { BookOpen } from "lucide-react";
 import { useCmsRows } from "@/lib/useCmsRows";
 import { DynamicIcon } from "@/components/DynamicIcon";
@@ -62,9 +63,11 @@ function ProgrammesPage() {
                     </div>
                   )}
                   <div className="p-7">
-                    <div className="size-11 bg-primary-soft text-primary rounded-xl grid place-items-center mb-4 group-hover:bg-mint transition-colors">
-                      <DynamicIcon name={p.category} className="size-5" />
-                    </div>
+                    {p.category && (p.category in LucideIcons) && (
+                      <div className="size-11 bg-primary-soft text-primary rounded-xl grid place-items-center mb-4 group-hover:bg-mint transition-colors">
+                        <DynamicIcon name={p.category} className="size-5" />
+                      </div>
+                    )}
                     <h3 className="text-xl font-semibold text-primary mb-2">{p.title}</h3>
                     <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{p.summary ?? p.description}</p>
                     <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground mb-6">

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
 import { ArrowRight, Wrench } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { useCmsRows } from "@/lib/useCmsRows";
 import { DynamicIcon } from "@/components/DynamicIcon";
 
@@ -45,9 +46,11 @@ function CorporatePage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((s) => (
                 <div key={s.id} className="bg-card border border-border rounded-2xl p-8">
-                  <div className="size-12 rounded-xl bg-primary-soft text-primary grid place-items-center mb-5">
-                    <DynamicIcon name={s.icon} className="size-5" />
-                  </div>
+                    {s.icon && (s.icon in LucideIcons) && (
+                      <div className="size-12 rounded-xl bg-primary-soft text-primary grid place-items-center mb-5">
+                        <DynamicIcon name={s.icon} className="size-5" />
+                      </div>
+                    )}
                   <h3 className="text-xl font-semibold text-primary mb-2">{s.title}</h3>
                   <p className="text-muted-foreground leading-relaxed">{s.description}</p>
                 </div>

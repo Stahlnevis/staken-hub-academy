@@ -73,7 +73,7 @@ const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ cl
   { key: "team", label: "Team", icon: Users },
   { key: "stories", label: "Success Stories", icon: Star },
   { key: "corp_services", label: "Corporate Services", icon: Wrench },
-  { key: "corp_clients", label: "Corporate Clients", icon: Building2 },
+  { key: "corp_clients", label: "Collaborators", icon: Building2 },
   { key: "why", label: "Why Choose Us", icon: Sparkles },
   { key: "modes", label: "Learning Modes", icon: Palette },
   { key: "values", label: "About Values", icon: Heart },
@@ -219,15 +219,17 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
   },
   corp_clients: {
     table: "corporate_clients",
-    title: "Corporate Clients",
+    title: "Collaborators",
     orderBy: { column: "sort_order", ascending: true },
     displayColumns: [
       { key: "logo_url", label: "Logo" },
       { key: "name", label: "Name" },
+      { key: "description", label: "Description" },
       { key: "website_url", label: "Website" },
     ],
     fields: [
       { key: "name", label: "Name", type: "text", required: true },
+      { key: "description", label: "Description", type: "textarea" },
       { key: "logo_url", label: "Logo", type: "image" },
       { key: "website_url", label: "Website URL", type: "url" },
       { key: "sort_order", label: "Sort Order", type: "number" },
