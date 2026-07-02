@@ -16,6 +16,7 @@ import {
   Palette,
   LogOut,
   ImageIcon,
+  KeyRound,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,8 @@ type SectionKey =
   | "values"
   | "announcements"
   | "messages"
-  | "posters";
+  | "posters"
+  | "password";
 
 const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -61,6 +63,7 @@ const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ cl
   { key: "modes", label: "Learning Modes", icon: Palette },
   { key: "values", label: "About Values", icon: Heart },
   { key: "messages", label: "Contact Messages", icon: Mail },
+  { key: "password", label: "Change Password", icon: KeyRound },
 ];
 
 const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
@@ -352,6 +355,8 @@ function AdminPage() {
               Open the poster upload page →
             </Link>
           </div>
+        ) : section === "password" ? (
+          <ChangePassword />
         ) : CONFIGS[section] ? (
           <CmsTable config={CONFIGS[section]!} />
         ) : null}
@@ -386,6 +391,80 @@ function Dashboard({ onNavigate }: { onNavigate: (s: SectionKey) => void }) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function ChangePassword() {
+  const [newPassword, setNewPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== repeatPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Password updated successfully!");
+      setNewPassword("");
+      setRepeatPassword("");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-md">
+      <h1 className="text-3xl font-display font-bold text-primary mb-2">Change Password</h1>
+      <p className="text-muted-foreground mb-8">
+        Update your administrative account password. For security, make sure it is strong and unique.
+      </p>
+
+      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 shadow-elegant space-y-4">
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+            New Password
+          </label>
+          <input
+            type="password"
+            required
+            minLength={6}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Min 6 characters"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+            Repeat New Password
+          </label>
+          <input
+            type="password"
+            required
+            minLength={6}
+            value={repeatPassword}
+            onChange={(e) => setRepeatPassword(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Repeat new password"
+          />
+        </div>
+        <Button type="submit" disabled={loading} className="w-full mt-2">
+          {loading ? "Updating..." : "Update Password"}
+        </Button>
+      </form>
     </div>
   );
 }
