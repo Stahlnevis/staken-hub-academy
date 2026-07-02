@@ -78,6 +78,7 @@ function StatItem({ end, suffix = "", label }: { end: number; suffix?: string; l
 }
 
 function HomePage() {
+  const { rows: stories } = useCmsRows<Story>("success_stories", { orderBy: "sort_order", limit: 3 });
   return (
     <SiteLayout>
       {/* HERO */}
