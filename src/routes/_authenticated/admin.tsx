@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Trash2,
   Loader2,
+  BarChart3,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,13 +63,15 @@ type SectionKey =
   | "messages"
   | "posters"
   | "password"
-  | "create_admin";
+  | "create_admin"
+  | "stats";
 
 const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { key: "programmes", label: "Programmes", icon: BookOpen },
   { key: "bootcamps", label: "Bootcamps", icon: Rocket },
   { key: "announcements", label: "Event Posters", icon: Megaphone },
+  { key: "stats", label: "Homepage Stats", icon: BarChart3 },
   { key: "posters", label: "Poster Uploader", icon: ImageIcon },
   { key: "team", label: "Team", icon: Users },
   { key: "stories", label: "Success Stories", icon: Star },
@@ -232,6 +235,23 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
       { key: "description", label: "Description", type: "textarea" },
       { key: "logo_url", label: "Logo", type: "image" },
       { key: "website_url", label: "Website URL", type: "url" },
+      { key: "sort_order", label: "Sort Order", type: "number" },
+    ],
+  },
+  stats: {
+    table: "stats",
+    title: "Homepage Stats",
+    description: "Manage the counters displayed on the homepage stats banner.",
+    orderBy: { column: "sort_order", ascending: true },
+    displayColumns: [
+      { key: "value", label: "Value" },
+      { key: "suffix", label: "Suffix" },
+      { key: "label", label: "Label" },
+    ],
+    fields: [
+      { key: "value", label: "Value (Number)", type: "number", required: true },
+      { key: "suffix", label: "Suffix (e.g. +, %)", type: "text", required: true },
+      { key: "label", label: "Label", type: "text", required: true },
       { key: "sort_order", label: "Sort Order", type: "number" },
     ],
   },

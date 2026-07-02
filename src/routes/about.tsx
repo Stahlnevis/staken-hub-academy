@@ -119,7 +119,7 @@ function AboutPage() {
         <section className="py-16 bg-surface">
           <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 text-center">
             <h2 className="font-display font-bold text-2xl md:text-3xl text-primary mb-10">Our Collaborators</h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
               {collaborators.map((c) => {
                 const url = c.website_url ? (c.website_url.startsWith("http") ? c.website_url : `https://${c.website_url}`) : undefined;
                 return (
@@ -128,7 +128,7 @@ function AboutPage() {
                     href={url ?? "#"}
                     target={url ? "_blank" : undefined}
                     rel="noreferrer"
-                    className="bg-card border border-border rounded-2xl p-6 shadow-soft hover:shadow-medium transition-all flex flex-col items-center text-center justify-between min-h-[200px] hover:border-mint/30"
+                    className="w-full sm:w-[280px] bg-card border border-border rounded-2xl p-6 shadow-soft hover:shadow-medium transition-all flex flex-col items-center text-center justify-between min-h-[200px] hover:border-mint/30"
                   >
                     <div className="h-20 flex items-center justify-center w-full mb-4">
                       {c.logo_url ? (

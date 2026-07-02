@@ -212,6 +212,36 @@ export type Database = {
         }
         Relationships: []
       }
+      stats: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          sort_order: number
+          suffix: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+          suffix?: string
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+          suffix?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       corporate_services: {
         Row: {
           created_at: string

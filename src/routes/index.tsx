@@ -87,8 +87,11 @@ function StatItem({ end, suffix = "", label }: { end: number; suffix?: string; l
   );
 }
 
+type Stat = { id: string; label: string; value: number; suffix: string };
+
 function HomePage() {
   const { rows: stories } = useCmsRows<Story>("success_stories", { orderBy: "sort_order", limit: 3 });
+  const { rows: stats } = useCmsRows<Stat>("stats", { orderBy: "sort_order" });
   return (
     <SiteLayout>
       {/* HERO */}
@@ -99,38 +102,32 @@ function HomePage() {
               <span className="size-2 bg-mint rounded-full animate-pulse" />
               Enrollment Open — Q3 2026 Cohorts
             </div>
-            <h1 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl text-primary leading-[1.05] mb-6 text-balance">
-              Empowering Africa <br className="hidden sm:block" />
-              <span className="text-mint">Through Digital</span> Skills
+            <h1 className="font-display font-black text-4xl md:text-5xl lg:text-6xl text-primary leading-tight mb-6 tracking-tight">
+              Empowering Africa through digital skills
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed">
-              Learn practical technology skills, build real-world projects, and prepare for high-impact careers in the global digital economy.
+            <p className="text-muted-foreground text-base md:text-lg mb-8 leading-relaxed max-w-lg">
+              Staken Hub Academy equips you with the practical technology skills needed to build global careers.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/programmes"
-                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-7 py-4 rounded-xl font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-7 py-4 rounded-full font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
               >
                 Explore Programmes <ArrowRight className="size-4" />
               </Link>
               <Link
-                to="/apply"
-                className="inline-flex items-center justify-center bg-card border-2 border-primary/15 text-primary px-7 py-4 rounded-xl font-semibold hover:bg-primary-soft transition-colors"
+                to="/corporate"
+                className="inline-flex items-center justify-center gap-2 border border-primary/20 text-primary px-7 py-4 rounded-full font-semibold hover:bg-primary-soft hover:border-transparent transition-all"
               >
-                Apply Now
+                Corporate Training
               </Link>
             </div>
           </div>
-
-          <div className="relative animate-fade-in-up">
-            <div className="absolute -top-12 -right-12 size-56 bg-mint/30 rounded-full blur-3xl" />
-            <div className="absolute -bottom-12 -left-12 size-56 bg-primary/15 rounded-full blur-3xl" />
-            <div className="relative aspect-[3/2] rounded-3xl overflow-hidden ring-1 ring-primary/10 shadow-elegant">
+          <div className="relative animate-fade-in lg:mt-0 mt-8">
+            <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-primary-soft shadow-elegant border border-border">
               <img
                 src={heroImage}
                 alt="African tech students collaborating in a modern Staken Hub Academy lab"
-                width={1280}
-                height={1280}
                 className="size-full object-cover"
               />
             </div>
@@ -152,10 +149,18 @@ function HomePage() {
       {/* STATS */}
       <section className="bg-primary py-16">
         <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          <StatItem end={2500} suffix="+" label="Students Trained" />
-          <StatItem end={18} suffix="+" label="Courses Offered" />
-          <StatItem end={45} suffix="+" label="Industry Mentors" />
-          <StatItem end={92} suffix="%" label="Graduates Certified" />
+          {stats.length > 0 ? (
+            stats.map((s) => (
+              <StatItem key={s.id} end={s.value} suffix={s.suffix} label={s.label} />
+            ))
+          ) : (
+            <>
+              <StatItem end={2500} suffix="+" label="Students Trained" />
+              <StatItem end={18} suffix="+" label="Courses Offered" />
+              <StatItem end={45} suffix="+" label="Industry Mentors" />
+              <StatItem end={92} suffix="%" label="Graduates Certified" />
+            </>
+          )}
         </div>
       </section>
 
