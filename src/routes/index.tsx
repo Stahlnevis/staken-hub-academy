@@ -2,19 +2,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight, CheckCircle2, Users, GraduationCap, Sparkles,
-  Laptop, Sun, Quote, ArrowUpRight,
+  Laptop, Sun, Quote,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { TESTIMONIALS } from "@/lib/programmes";
+import { useCmsRows } from "@/lib/useCmsRows";
 import heroImage from "@/assets/hero-students.jpg";
-import alumni1 from "@/assets/alumni-1.jpg";
-import alumni2 from "@/assets/alumni-2.jpg";
-import alumni3 from "@/assets/alumni-3.jpg";
 
-const ALUMNI_IMG: Record<string, string> = {
-  "alumni-1": alumni1,
-  "alumni-2": alumni2,
-  "alumni-3": alumni3,
+type Story = {
+  id: string;
+  name: string;
+  role: string | null;
+  company: string | null;
+  photo_url: string | null;
+  quote: string | null;
 };
 
 export const Route = createFileRoute("/")({
@@ -78,6 +78,7 @@ function StatItem({ end, suffix = "", label }: { end: number; suffix?: string; l
 }
 
 function HomePage() {
+  const { rows: stories } = useCmsRows<Story>("success_stories", { orderBy: "sort_order", limit: 3 });
   return (
     <SiteLayout>
       {/* HERO */}

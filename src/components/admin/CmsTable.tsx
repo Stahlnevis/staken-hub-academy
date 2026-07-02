@@ -112,19 +112,20 @@ export function CmsTable({ config }: { config: TableConfig }) {
   const setField = (k: string, v: unknown) => setForm((prev) => ({ ...prev, [k]: v }));
 
   const uploadImage = async (fieldKey: string, file: File) => {
-    if (!config.storageBucket) {
-      toast.error("No storage bucket configured for this table");
-      return;
-    }
+    const bucket = config.storageBucket ?? "media";
     const ext = file.name.split(".").pop();
     const path = `${config.table}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from(config.storageBucket).upload(path, file, {
+    const { error } = await supabase.storage.from(bucket).upload(path, file, {
       cacheControl: "3600",
       upsert: false,
     });
     if (error) return toast.error(error.message);
-    const { data } = supabase.storage.from(config.storageBucket).getPublicUrl(path);
-    setField(fieldKey, data.publicUrl);
+    // Bucket is private: create a long-lived signed URL (~100 years)
+    const { data, error: signErr } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(path, 60 * 60 * 24 * 365 * 100);
+    if (signErr || !data) return toast.error(signErr?.message ?? "Failed to sign URL");
+    setField(fieldKey, data.signedUrl);
     toast.success("Image uploaded");
   };
 
