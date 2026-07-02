@@ -66,24 +66,36 @@ function AdminPostersPage() {
       .from("announcements")
       .select("*")
       .order("created_at", { ascending: false });
+    
     if (error) {
       toast.error(error.message);
       setLoadingRows(false);
       return;
     }
-    const paths = (data ?? []).map((r) => r.image_url);
-    let signedMap = new Map<string, string>();
-    if (paths.length) {
-      const { data: signed } = await supabase.storage
-        .from("posters")
-        .createSignedUrls(paths, 60 * 60 * 4);
-      signed?.forEach((s, i) => {
-        if (s.signedUrl) signedMap.set(paths[i], s.signedUrl);
-      });
-    }
-    setRows(
-      (data ?? []).map((r) => ({ ...r, signedUrl: signedMap.get(r.image_url) })),
-    );
+
+    const resolved = await Promise.all((data ?? []).map(async (r) => {
+      if (!r.image_url) {
+        return { ...r, signedUrl: "" };
+      }
+      if (r.image_url.startsWith("http://") || r.image_url.startsWith("https://")) {
+        return { ...r, signedUrl: r.image_url };
+      }
+      const bucket = r.image_url.startsWith("announcements/") ? "media" : "posters";
+      try {
+        const { data: signed, error: signErr } = await supabase.storage
+          .from(bucket)
+          .createSignedUrl(r.image_url, 60 * 60 * 4);
+        if (signErr || !signed?.signedUrl) {
+          throw new Error(signErr?.message || "Failed to create signed URL");
+        }
+        return { ...r, signedUrl: signed.signedUrl };
+      } catch (err) {
+        const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(r.image_url);
+        return { ...r, signedUrl: publicUrl };
+      }
+    }));
+
+    setRows(resolved);
     setLoadingRows(false);
   }
 

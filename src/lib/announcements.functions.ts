@@ -33,32 +33,36 @@ export const listAnnouncements = createServerFn({ method: "GET" }).handler(
     if (error) throw new Error(error.message);
     if (!data || data.length === 0) return [];
 
-    const paths = data.map((r) => r.image_url);
-    const byPath = new Map<string, string>();
-
-    try {
-      const { data: signed, error: signErr } = await client.storage
-        .from("posters")
-        .createSignedUrls(paths, 60 * 60 * 24); // 24h
-
-      if (signErr) {
-        throw new Error(signErr.message);
+    const resolvedData = await Promise.all(data.map(async (r) => {
+      if (!r.image_url) {
+        return { ...r, signed_image_url: "" };
       }
 
-      signed?.forEach((s, i) => {
-        if (s.signedUrl) byPath.set(paths[i], s.signedUrl);
-      });
-    } catch (err) {
-      console.warn("[Supabase] Failed to create signed URLs, falling back to public URLs:", err);
-      paths.forEach((p) => {
-        const { data: { publicUrl } } = client.storage.from("posters").getPublicUrl(p);
-        byPath.set(p, publicUrl);
-      });
-    }
+      // 1. If it's already a full HTTP(S) URL, return it directly.
+      if (r.image_url.startsWith("http://") || r.image_url.startsWith("https://")) {
+        return { ...r, signed_image_url: r.image_url };
+      }
 
-    return data.map((r) => ({
-      ...r,
-      signed_image_url: byPath.get(r.image_url) ?? "",
+      // 2. Determine which bucket to use based on path structure.
+      // CmsTable uploads under "announcements/...", while the legacy posters uploader uses user UUID paths.
+      const bucket = r.image_url.startsWith("announcements/") ? "media" : "posters";
+
+      try {
+        const { data: signed, error: signErr } = await client.storage
+          .from(bucket)
+          .createSignedUrl(r.image_url, 60 * 60 * 24); // 24h
+        
+        if (signErr || !signed?.signedUrl) {
+          throw new Error(signErr?.message || "Failed to create signed URL");
+        }
+        return { ...r, signed_image_url: signed.signedUrl };
+      } catch (err) {
+        console.warn(`[Supabase] Failed to sign URL for path: ${r.image_url} in bucket: ${bucket}, falling back to public URL:`, err);
+        const { data: { publicUrl } } = client.storage.from(bucket).getPublicUrl(r.image_url);
+        return { ...r, signed_image_url: publicUrl };
+      }
     }));
+
+    return resolvedData;
   },
 );
