@@ -187,13 +187,13 @@ function EventsPage() {
                   )}
                   {p.cta_url && p.cta_label && tab !== "previous" && (
                     <a
-                      href={p.cta_url}
-                      target={p.cta_url.startsWith("http") ? "_blank" : undefined}
+                      href={p.cta_url.startsWith("http") || p.cta_url.startsWith("/") ? p.cta_url : `https://${p.cta_url}`}
+                      target={p.cta_url.startsWith("http") || (!p.cta_url.startsWith("/") && p.cta_url.includes(".")) ? "_blank" : undefined}
                       rel="noopener noreferrer"
                       className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold hover:bg-teal-deep transition-colors"
                     >
                       {p.cta_label}
-                      {p.cta_url.startsWith("http") && (
+                      {(p.cta_url.startsWith("http") || (!p.cta_url.startsWith("/") && p.cta_url.includes("."))) && (
                         <ExternalLink className="size-3.5" />
                       )}
                     </a>
