@@ -140,6 +140,7 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
     displayColumns: [
       { key: "image_url", label: "Poster" },
       { key: "title", label: "Title" },
+      { key: "category", label: "Category" },
       { key: "event_date", label: "Event Date" },
       { key: "cta_label", label: "CTA" },
     ],
@@ -147,6 +148,17 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
       { key: "title", label: "Title", type: "text", required: true },
       { key: "description", label: "Description", type: "textarea" },
       { key: "image_url", label: "Poster Image", type: "image", required: true },
+      {
+        key: "category",
+        label: "Category",
+        type: "select",
+        required: true,
+        options: [
+          { label: "Previous", value: "previous" },
+          { label: "Current", value: "current" },
+          { label: "Future", value: "future" },
+        ],
+      },
       { key: "event_date", label: "Event Date", type: "date", helper: "Determines Previous / Current / Future placement" },
       { key: "cta_label", label: "Call-to-action Label", type: "text", placeholder: "Register now" },
       { key: "cta_url", label: "Call-to-action URL", type: "url" },

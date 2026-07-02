@@ -23,7 +23,8 @@ export type FieldType =
   | "date"
   | "url"
   | "image"
-  | "list"; // text[] as newline-separated
+  | "list"
+  | "select"; // drop-down
 
 export type Field = {
   key: string;
@@ -32,6 +33,7 @@ export type Field = {
   required?: boolean;
   placeholder?: string;
   helper?: string;
+  options?: { label: string; value: string }[];
 };
 
 export type TableConfig = {
@@ -58,6 +60,9 @@ function defaultValues(fields: Field[]): Record<string, unknown> {
         break;
       case "list":
         v[f.key] = [];
+        break;
+      case "select":
+        v[f.key] = f.options?.[0]?.value ?? "";
         break;
       default:
         v[f.key] = "";
@@ -306,6 +311,19 @@ function FieldInput({
             <img src={value} alt="" className="h-24 object-contain rounded border border-border" />
           )}
         </div>
+      ) : field.type === "select" ? (
+        <select
+          id={id}
+          value={(value as string) ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary border-border"
+        >
+          {field.options?.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
       ) : (
         <Input
           id={id}
