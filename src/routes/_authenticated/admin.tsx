@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
@@ -21,11 +21,20 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CmsTable, type TableConfig } from "@/components/admin/CmsTable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import stakenHubLogo from "@/assets/staken-hub-logo-teal.png";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -544,6 +553,25 @@ function CreateAdmin() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<{ id: string; email: string; created_at: string }[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<{ id: string; email: string } | null>(null);
+
+  const loadUsers = async () => {
+    setLoadingUsers(true);
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) toast.error(error.message);
+    else setUsers(data ?? []);
+    setLoadingUsers(false);
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -593,6 +621,7 @@ function CreateAdmin() {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      loadUsers();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to create account");
     } finally {
@@ -600,59 +629,158 @@ function CreateAdmin() {
     }
   };
 
-  return (
-    <div className="max-w-md">
-      <h1 className="text-3xl font-display font-bold text-primary mb-2">Create Admin Account</h1>
-      <p className="text-muted-foreground mb-8">
-        Register a new administrator account. The new user will be granted administrator access automatically.
-      </p>
+  const startDelete = (user: { id: string; email: string }) => {
+    setUserToDelete(user);
+    setDeleteOpen(true);
+  };
 
-      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 shadow-elegant space-y-4">
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
-            Email Address
-          </label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="admin@stakenhub.com"
-          />
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("id", userToDelete.id);
+      if (error) throw error;
+      toast.success("User deleted successfully!");
+      setDeleteOpen(false);
+      setUserToDelete(null);
+      loadUsers();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-12">
+      <div className="grid md:grid-cols-12 gap-8 items-start">
+        <div className="md:col-span-5 bg-card border border-border rounded-2xl p-6 shadow-elegant">
+          <h2 className="text-xl font-display font-bold text-primary mb-2">Create Admin Account</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            Register a new administrator account. The new user will be granted administrator access automatically.
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+                Email Address
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="admin@stakenhub.com"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Min 6 characters"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Confirm password"
+              />
+            </div>
+            <Button type="submit" disabled={loading} className="w-full mt-2">
+              {loading ? <Loader2 className="size-4 animate-spin mr-1" /> : <UserPlus className="size-4 mr-1" />}
+              Create Admin
+            </Button>
+          </form>
         </div>
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
-            Password
-          </label>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="Min 6 characters"
-          />
+
+        <div className="md:col-span-7 bg-card border border-border rounded-2xl p-6 shadow-elegant">
+          <h2 className="text-xl font-display font-bold text-primary mb-2">Administrators</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            A list of all users with administrative access. Deleting a user here immediately revokes their sign-in capability.
+          </p>
+
+          {loadingUsers ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="size-8 animate-spin text-mint" />
+            </div>
+          ) : users.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-8 text-center border border-dashed border-border rounded-xl">
+              No administrator accounts found.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-primary-soft/40 text-left">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-primary">Email</th>
+                    <th className="px-4 py-3 font-semibold text-primary">Created At</th>
+                    <th className="px-4 py-3 text-right font-semibold text-primary">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {users.map((u) => (
+                    <tr key={u.id} className="hover:bg-muted/30">
+                      <td className="px-4 py-3 align-middle font-medium text-primary">{u.email}</td>
+                      <td className="px-4 py-3 align-middle text-muted-foreground">
+                        {new Date(u.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 align-middle text-right">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => startDelete(u)}
+                          className="hover:bg-destructive/10 text-destructive cursor-pointer"
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="Confirm password"
-          />
-        </div>
-        <Button type="submit" disabled={loading} className="w-full mt-2">
-          {loading ? "Creating..." : "Create Admin"}
-        </Button>
-      </form>
+      </div>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Revoke Admin Access</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-sm text-muted-foreground">
+            Are you sure you want to delete the administrator <b>{userToDelete?.email}</b>? This action will permanently revoke their dashboard access and delete their account.
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setDeleteOpen(false)} disabled={loading}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={loading}>
+              {loading ? <Loader2 className="size-4 animate-spin mr-1" /> : <Trash2 className="size-4 mr-1" />}
+              Delete Account
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
