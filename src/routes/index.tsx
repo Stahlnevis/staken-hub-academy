@@ -7,6 +7,16 @@ import {
 import { SiteLayout } from "@/components/SiteLayout";
 import { useCmsRows } from "@/lib/useCmsRows";
 import heroImage from "@/assets/hero-students.jpg";
+import { TESTIMONIALS } from "@/lib/programmes";
+import alumni1 from "@/assets/alumni-1.jpg";
+import alumni2 from "@/assets/alumni-2.jpg";
+import alumni3 from "@/assets/alumni-3.jpg";
+
+const ALUMNI_IMG: Record<string, string> = {
+  "alumni-1": alumni1,
+  "alumni-2": alumni2,
+  "alumni-3": alumni3,
+};
 
 type Story = {
   id: string;
