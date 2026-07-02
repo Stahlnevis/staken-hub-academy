@@ -6,6 +6,7 @@ import { DynamicIcon } from "@/components/DynamicIcon";
 
 type Value = { id: string; icon: string | null; title: string; description: string | null };
 type TeamMember = { id: string; name: string; role: string | null; bio: string | null; photo_url: string | null; linkedin_url: string | null };
+type Collaborator = { id: string; name: string; logo_url: string | null; website_url: string | null };
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/about")({
 function AboutPage() {
   const { rows: values } = useCmsRows<Value>("about_values", { orderBy: "sort_order" });
   const { rows: team } = useCmsRows<TeamMember>("team_members", { orderBy: "sort_order" });
+  const { rows: collaborators } = useCmsRows<Collaborator>("corporate_clients", { orderBy: "sort_order" });
   return (
     <SiteLayout>
       <PageHero
@@ -107,6 +109,31 @@ function AboutPage() {
                     {m.bio && <p className="text-sm text-muted-foreground mt-3 leading-relaxed line-clamp-3">{m.bio}</p>}
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {collaborators.length > 0 && (
+        <section className="py-16 bg-surface">
+          <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 text-center">
+            <h2 className="font-display font-bold text-2xl md:text-3xl text-primary mb-10">Our Collaborators</h2>
+            <div className="flex flex-wrap justify-center items-center gap-8">
+              {collaborators.map((c) => (
+                <a
+                  key={c.id}
+                  href={c.website_url ?? "#"}
+                  target={c.website_url ? "_blank" : undefined}
+                  rel="noreferrer"
+                  className="bg-card border border-border rounded-xl px-6 py-4 shadow-soft hover:shadow-medium transition-all"
+                >
+                  {c.logo_url ? (
+                    <img src={c.logo_url} alt={c.name} className="h-12 object-contain" />
+                  ) : (
+                    <span className="font-semibold text-primary">{c.name}</span>
+                  )}
+                </a>
               ))}
             </div>
           </div>

@@ -6,6 +6,14 @@ import { Loader2, Trash2, Upload, LogOut, ArrowLeft } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/posters")({
   head: () => ({
@@ -45,6 +53,8 @@ function AdminPostersPage() {
   const [ctaUrl, setCtaUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState<Row | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -152,18 +162,27 @@ function AdminPostersPage() {
     }
   }
 
-  async function onDelete(row: Row) {
-    if (!confirm(`Delete "${row.title}"?`)) return;
+  function startDelete(row: Row) {
+    setRowToDelete(row);
+    setDeleteConfirmOpen(true);
+  }
+
+  async function confirmDelete() {
+    if (!rowToDelete) return;
+    setSubmitting(true);
     const { error: delObj } = await supabase.storage
       .from("posters")
-      .remove([row.image_url]);
+      .remove([rowToDelete.image_url]);
     if (delObj) toast.error(delObj.message);
-    const { error } = await supabase.from("announcements").delete().eq("id", row.id);
+    const { error } = await supabase.from("announcements").delete().eq("id", rowToDelete.id);
+    setSubmitting(false);
     if (error) {
       toast.error(error.message);
       return;
     }
     toast.success("Deleted");
+    setDeleteConfirmOpen(false);
+    setRowToDelete(null);
     await loadRows();
     qc.invalidateQueries({ queryKey: ["announcements"] });
   }
@@ -378,9 +397,9 @@ function AdminPostersPage() {
                     )}
                   </div>
                   <button
-                    onClick={() => onDelete(r)}
+                    onClick={() => startDelete(r)}
                     aria-label="Delete"
-                    className="self-start p-2 rounded-lg text-destructive hover:bg-destructive/10"
+                    className="self-start p-2 rounded-lg text-destructive hover:bg-destructive/10 cursor-pointer"
                   >
                     <Trash2 className="size-4" />
                   </button>
@@ -390,6 +409,26 @@ function AdminPostersPage() {
           )}
         </div>
       </section>
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-sm text-muted-foreground">
+            Are you sure you want to delete the poster "{rowToDelete?.title}"? This action cannot be undone.
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setDeleteConfirmOpen(false)} disabled={submitting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={submitting}>
+              {submitting ? <Loader2 className="size-4 animate-spin mr-1" /> : <Trash2 className="size-4 mr-1" />}
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SiteLayout>
   );
 }

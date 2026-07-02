@@ -5,7 +5,6 @@ import { useCmsRows } from "@/lib/useCmsRows";
 import { DynamicIcon } from "@/components/DynamicIcon";
 
 type Service = { id: string; icon: string | null; title: string; description: string | null };
-type Client = { id: string; name: string; logo_url: string | null; website_url: string | null };
 
 export const Route = createFileRoute("/corporate")({
   head: () => ({
@@ -26,7 +25,6 @@ export const Route = createFileRoute("/corporate")({
 
 function CorporatePage() {
   const { rows: services, loading } = useCmsRows<Service>("corporate_services", { orderBy: "sort_order" });
-  const { rows: clients } = useCmsRows<Client>("corporate_clients", { orderBy: "sort_order" });
   return (
     <SiteLayout>
       <PageHero
@@ -66,31 +64,6 @@ function CorporatePage() {
           </div>
         </div>
       </section>
-
-      {clients.length > 0 && (
-        <section className="py-16 bg-surface">
-          <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 text-center">
-            <h2 className="font-display font-bold text-2xl md:text-3xl text-primary mb-10">Trusted by teams across Africa</h2>
-            <div className="flex flex-wrap justify-center items-center gap-8">
-              {clients.map((c) => (
-                <a
-                  key={c.id}
-                  href={c.website_url ?? "#"}
-                  target={c.website_url ? "_blank" : undefined}
-                  rel="noreferrer"
-                  className="bg-card border border-border rounded-xl px-6 py-4 shadow-soft hover:shadow-medium transition-all"
-                >
-                  {c.logo_url ? (
-                    <img src={c.logo_url} alt={c.name} className="h-12 object-contain" />
-                  ) : (
-                    <span className="font-semibold text-primary">{c.name}</span>
-                  )}
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </SiteLayout>
   );
 }

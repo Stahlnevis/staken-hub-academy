@@ -80,6 +80,8 @@ export function CmsTable({ config }: { config: TableConfig }) {
   const [form, setForm] = useState<Record<string, unknown>>(
     defaultValues(config.fields),
   );
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -161,13 +163,22 @@ export function CmsTable({ config }: { config: TableConfig }) {
     load();
   };
 
-  const remove = async (id: string) => {
-    if (!confirm("Delete this record?")) return;
+  const remove = (id: string) => {
+    setRowToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!rowToDelete) return;
+    setSaving(true);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from(config.table).delete().eq("id", id);
+    const { error } = await (supabase as any).from(config.table).delete().eq("id", rowToDelete);
+    setSaving(false);
     if (error) toast.error(error.message);
     else {
       toast.success("Deleted");
+      setDeleteConfirmOpen(false);
+      setRowToDelete(null);
       load();
     }
   };
@@ -255,6 +266,26 @@ export function CmsTable({ config }: { config: TableConfig }) {
             <Button onClick={save} disabled={saving}>
               {saving ? <Loader2 className="size-4 animate-spin mr-1" /> : <Save className="size-4 mr-1" />}
               Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-sm text-muted-foreground">
+            Are you sure you want to delete this record? This action cannot be undone.
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setDeleteConfirmOpen(false)} disabled={saving}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={saving}>
+              {saving ? <Loader2 className="size-4 animate-spin mr-1" /> : <Trash2 className="size-4 mr-1" />}
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
