@@ -18,7 +18,6 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,20 +32,9 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/admin/posters` },
-        });
-        if (error) throw error;
-        toast.success("Account created. You can now sign in.");
-        setMode("signin");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        navigate({ to: "/admin/posters" });
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      navigate({ to: "/admin/posters" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
     } finally {
@@ -59,12 +47,10 @@ function AuthPage() {
       <section className="mx-auto max-w-md px-4 sm:px-6 py-20">
         <div className="bg-card border border-border rounded-2xl p-8 shadow-elegant">
           <h1 className="font-display font-bold text-2xl text-primary mb-2">
-            {mode === "signin" ? "Admin sign in" : "Create admin account"}
+            Admin sign in
           </h1>
           <p className="text-sm text-muted-foreground mb-6">
-            {mode === "signin"
-              ? "Sign in to post and manage posters."
-              : "Create an account, then ask the owner to grant admin access."}
+            Sign in to post and manage posters.
           </p>
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
@@ -98,18 +84,9 @@ function AuthPage() {
               className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3 text-sm font-semibold hover:bg-teal-deep transition-colors disabled:opacity-60"
             >
               {loading && <Loader2 className="size-4 animate-spin" />}
-              {mode === "signin" ? "Sign in" : "Create account"}
+              Sign in
             </button>
           </form>
-          <button
-            type="button"
-            onClick={() => setMode((m) => (m === "signin" ? "signup" : "signin"))}
-            className="mt-4 text-sm text-primary hover:underline w-full text-center"
-          >
-            {mode === "signin"
-              ? "Need an account? Create one"
-              : "Already have an account? Sign in"}
-          </button>
         </div>
       </section>
     </SiteLayout>

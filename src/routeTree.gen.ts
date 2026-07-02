@@ -21,6 +21,7 @@ import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProgrammesSlugRouteImport } from './routes/programmes.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminPostersRouteImport } from './routes/_authenticated/admin.posters'
 
@@ -83,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgrammesSlugRoute = ProgrammesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ProgrammesRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -104,10 +110,11 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
-  '/programmes': typeof ProgrammesRoute
+  '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/programmes/$slug': typeof ProgrammesSlugRoute
   '/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRoutesByTo {
@@ -119,10 +126,11 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
-  '/programmes': typeof ProgrammesRoute
+  '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/programmes/$slug': typeof ProgrammesSlugRoute
   '/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRoutesById {
@@ -136,10 +144,11 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
-  '/programmes': typeof ProgrammesRoute
+  '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/programmes/$slug': typeof ProgrammesSlugRoute
   '/_authenticated/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRouteTypes {
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/success-stories'
     | '/admin'
+    | '/programmes/$slug'
     | '/admin/posters'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -172,6 +182,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/success-stories'
     | '/admin'
+    | '/programmes/$slug'
     | '/admin/posters'
   id:
     | '__root__'
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/success-stories'
     | '/_authenticated/admin'
+    | '/programmes/$slug'
     | '/_authenticated/admin/posters'
   fileRoutesById: FileRoutesById
 }
@@ -201,7 +213,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
   EventsRoute: typeof EventsRoute
-  ProgrammesRoute: typeof ProgrammesRoute
+  ProgrammesRoute: typeof ProgrammesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuccessStoriesRoute: typeof SuccessStoriesRoute
 }
@@ -292,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/programmes/$slug': {
+      id: '/programmes/$slug'
+      path: '/$slug'
+      fullPath: '/programmes/$slug'
+      preLoaderRoute: typeof ProgrammesSlugRouteImport
+      parentRoute: typeof ProgrammesRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -331,6 +350,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ProgrammesRouteChildren {
+  ProgrammesSlugRoute: typeof ProgrammesSlugRoute
+}
+
+const ProgrammesRouteChildren: ProgrammesRouteChildren = {
+  ProgrammesSlugRoute: ProgrammesSlugRoute,
+}
+
+const ProgrammesRouteWithChildren = ProgrammesRoute._addFileChildren(
+  ProgrammesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -341,7 +372,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
   EventsRoute: EventsRoute,
-  ProgrammesRoute: ProgrammesRoute,
+  ProgrammesRoute: ProgrammesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuccessStoriesRoute: SuccessStoriesRoute,
 }

@@ -6,6 +6,7 @@ export type AnnouncementListItem = {
   description: string | null;
   image_url: string;
   signed_image_url: string;
+  category: string | null;
   event_date: string | null;
   cta_label: string | null;
   cta_url: string | null;
@@ -25,7 +26,7 @@ export const listAnnouncements = createServerFn({ method: "GET" }).handler(
     const { data, error } = await client
       .from("announcements")
       .select(
-        "id, title, description, image_url, event_date, cta_label, cta_url, created_at",
+        "id, title, description, image_url, event_date, cta_label, cta_url, created_at, category",
       )
       .order("created_at", { ascending: false });
 

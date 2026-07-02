@@ -17,7 +17,12 @@ import {
   LogOut,
   ImageIcon,
   KeyRound,
+  UserPlus,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
 } from "lucide-react";
+import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CmsTable, type TableConfig } from "@/components/admin/CmsTable";
@@ -47,7 +52,8 @@ type SectionKey =
   | "announcements"
   | "messages"
   | "posters"
-  | "password";
+  | "password"
+  | "create_admin";
 
 const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -64,6 +70,7 @@ const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ cl
   { key: "values", label: "About Values", icon: Heart },
   { key: "messages", label: "Contact Messages", icon: Mail },
   { key: "password", label: "Change Password", icon: KeyRound },
+  { key: "create_admin", label: "Create Admin", icon: UserPlus },
 ];
 
 const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
@@ -290,6 +297,7 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
 
 function AdminPage() {
   const [section, setSection] = useState<SectionKey>("dashboard");
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -300,16 +308,41 @@ function AdminPage() {
   return (
     <div className="min-h-screen bg-surface flex">
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 bg-primary text-primary-foreground flex flex-col sticky top-0 h-screen">
-        <div className="p-5 border-b border-white/10 flex items-center gap-2.5">
-          <div className="size-9 bg-white rounded-lg p-1 grid place-items-center">
-            <img src={stakenHubLogo} alt="Staken Hub" className="size-full object-contain" />
+      <aside className={`shrink-0 bg-primary text-primary-foreground flex flex-col sticky top-0 h-screen transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"}`}>
+        {isCollapsed ? (
+          <div className="p-4 border-b border-white/10 flex flex-col items-center gap-4">
+            <div className="size-9 bg-white rounded-lg p-1 grid place-items-center">
+              <img src={stakenHubLogo} alt="Staken Hub" className="size-full object-contain" />
+            </div>
+            <button
+              onClick={() => setIsCollapsed(false)}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-primary-foreground/80 hover:text-primary-foreground cursor-pointer"
+              title="Expand Sidebar"
+            >
+              <ChevronRight className="size-4" />
+            </button>
           </div>
-          <div>
-            <div className="text-sm font-display font-bold leading-tight">STAKEN HUB</div>
-            <div className="text-[10px] uppercase tracking-widest opacity-70">Admin CMS</div>
+        ) : (
+          <div className="p-4 border-b border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="size-9 bg-white rounded-lg p-1 grid place-items-center">
+                <img src={stakenHubLogo} alt="Staken Hub" className="size-full object-contain" />
+              </div>
+              <div>
+                <div className="text-sm font-display font-bold leading-tight">STAKEN HUB</div>
+                <div className="text-[10px] uppercase tracking-widest opacity-70">Admin CMS</div>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-primary-foreground/80 hover:text-primary-foreground cursor-pointer"
+              title="Collapse Sidebar"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
           </div>
-        </div>
+        )}
+
         <nav className="flex-1 overflow-y-auto py-3">
           {SECTIONS.map((s) => {
             const Icon = s.icon;
@@ -318,27 +351,50 @@ function AdminPage() {
               <button
                 key={s.key}
                 onClick={() => setSection(s.key)}
-                className={`w-full flex items-center gap-3 px-5 py-2.5 text-sm font-medium transition-colors ${
+                className={`w-full flex items-center gap-3 py-2.5 text-sm font-medium transition-colors ${
+                  isCollapsed ? "justify-center px-0" : "px-5"
+                } ${
                   active ? "bg-white/10 border-l-2 border-mint" : "hover:bg-white/5 border-l-2 border-transparent"
                 }`}
+                title={isCollapsed ? s.label : undefined}
               >
-                <Icon className="size-4" />
-                <span>{s.label}</span>
+                <Icon className="size-4 shrink-0" />
+                {!isCollapsed && <span>{s.label}</span>}
               </button>
             );
           })}
         </nav>
-        <div className="p-4 border-t border-white/10 space-y-2">
-          <Link
-            to="/"
-            className="w-full text-xs opacity-80 hover:opacity-100 block text-center py-2 rounded-md bg-white/5"
-          >
-            View Site →
-          </Link>
-          <Button variant="ghost" size="sm" onClick={signOut} className="w-full text-primary-foreground hover:bg-white/10">
-            <LogOut className="size-4 mr-1.5" /> Sign out
-          </Button>
-        </div>
+
+        {isCollapsed ? (
+          <div className="p-4 border-t border-white/10 flex flex-col items-center gap-4">
+            <Link
+              to="/"
+              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-primary-foreground/80 hover:text-primary-foreground"
+              title="View Site"
+            >
+              <ExternalLink className="size-4" />
+            </Link>
+            <button
+              onClick={signOut}
+              className="p-2 rounded-lg hover:bg-white/10 text-primary-foreground/80 hover:text-primary-foreground cursor-pointer"
+              title="Sign out"
+            >
+              <LogOut className="size-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="p-4 border-t border-white/10 space-y-2">
+            <Link
+              to="/"
+              className="w-full text-xs opacity-80 hover:opacity-100 block text-center py-2 rounded-md bg-white/5"
+            >
+              View Site →
+            </Link>
+            <Button variant="ghost" size="sm" onClick={signOut} className="w-full text-primary-foreground hover:bg-white/10 justify-start">
+              <LogOut className="size-4 mr-1.5" /> Sign out
+            </Button>
+          </div>
+        )}
       </aside>
 
       {/* Main content */}
@@ -357,6 +413,8 @@ function AdminPage() {
           </div>
         ) : section === "password" ? (
           <ChangePassword />
+        ) : section === "create_admin" ? (
+          <CreateAdmin />
         ) : CONFIGS[section] ? (
           <CmsTable config={CONFIGS[section]!} />
         ) : null}
@@ -463,6 +521,124 @@ function ChangePassword() {
         </div>
         <Button type="submit" disabled={loading} className="w-full mt-2">
           {loading ? "Updating..." : "Update Password"}
+        </Button>
+      </form>
+    </div>
+  );
+}
+
+function CreateAdmin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Initialize temporary client to avoid modifying the current session
+      const signUpClient = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+          },
+        }
+      );
+
+      // Sign up the new user
+      const { data, error } = await signUpClient.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+      if (!data.user) throw new Error("User creation failed");
+
+      // Assign the 'admin' role to the newly created user using the current admin's session
+      const { error: roleError } = await supabase
+        .from("user_roles")
+        .insert({
+          user_id: data.user.id,
+          role: "admin",
+        });
+
+      if (roleError) throw roleError;
+
+      toast.success("Admin account created successfully!");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to create account");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-md">
+      <h1 className="text-3xl font-display font-bold text-primary mb-2">Create Admin Account</h1>
+      <p className="text-muted-foreground mb-8">
+        Register a new administrator account. The new user will be granted administrator access automatically.
+      </p>
+
+      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 shadow-elegant space-y-4">
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+            Email Address
+          </label>
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="admin@stakenhub.com"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+            Password
+          </label>
+          <input
+            type="password"
+            required
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Min 6 characters"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1.5">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            required
+            minLength={6}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Confirm password"
+          />
+        </div>
+        <Button type="submit" disabled={loading} className="w-full mt-2">
+          {loading ? "Creating..." : "Create Admin"}
         </Button>
       </form>
     </div>

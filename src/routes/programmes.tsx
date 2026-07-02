@@ -80,7 +80,8 @@ function ProgrammesPage() {
                       )}
                     </div>
                     <Link
-                      to="/apply"
+                      to="/programmes/$slug"
+                      params={{ slug: p.slug }}
                       className="inline-flex items-center justify-center w-full py-3 rounded-lg border border-primary/15 font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm"
                     >
                       Learn More

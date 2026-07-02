@@ -2,9 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
 import { COHORTS } from "@/lib/programmes";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useCmsRows } from "@/lib/useCmsRows";
 
 export const Route = createFileRoute("/apply")({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      programme: (search.programme as string) || undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Apply Now — Staken Hub Academy" },
@@ -22,8 +28,29 @@ function ApplyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null);
   const [hasCoupon, setHasCoupon] = useState<"yes" | "no">("no");
-  const [selectedProgramme, setSelectedProgramme] = useState(COHORTS[0]?.programme || "");
   const [couponError, setCouponError] = useState<string | null>(null);
+
+  const { rows: dbProgrammes, loading: loadingProgrammes } = useCmsRows<any>("programmes", { orderBy: "sort_order" });
+  const search = Route.useSearch();
+  const [selectedProgramme, setSelectedProgramme] = useState("");
+
+  // Update selected program if URL query param matches
+  useEffect(() => {
+    if (search.programme) {
+      const match = dbProgrammes.find(
+        (p: any) => p.title.toLowerCase() === search.programme?.toLowerCase()
+      ) || COHORTS.find(
+        (c) => c.programme.toLowerCase() === search.programme?.toLowerCase()
+      );
+      if (match) {
+        setSelectedProgramme("title" in match ? match.title : match.programme);
+      }
+    } else if (dbProgrammes.length > 0 && !selectedProgramme) {
+      setSelectedProgramme(dbProgrammes[0].title);
+    } else if (COHORTS.length > 0 && !selectedProgramme) {
+      setSelectedProgramme(COHORTS[0].programme);
+    }
+  }, [search.programme, dbProgrammes, selectedProgramme]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -151,12 +178,30 @@ function ApplyPage() {
                       setCouponError(null);
                     }
                   }}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loadingProgrammes}
                   className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-mint focus:ring-2 focus:ring-mint/30 disabled:opacity-50"
                 >
-                  {COHORTS.map((c) => (
-                    <option key={c.programme} value={c.programme}>{c.programme}</option>
-                  ))}
+                  {loadingProgrammes ? (
+                    <option value="">Loading programmes...</option>
+                  ) : (
+                    <>
+                      {dbProgrammes.map((p: any) => (
+                        <option key={p.id} value={p.title}>
+                          {p.title}
+                        </option>
+                      ))}
+                      {COHORTS.filter(
+                        (c) =>
+                          !dbProgrammes.some(
+                            (p: any) => p.title.toLowerCase() === c.programme.toLowerCase()
+                          )
+                      ).map((c) => (
+                        <option key={c.programme} value={c.programme}>
+                          {c.programme}
+                        </option>
+                      ))}
+                    </>
+                  )}
                 </select>
               </div>
 

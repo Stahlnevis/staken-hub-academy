@@ -22,6 +22,7 @@ type Row = {
   title: string;
   description: string | null;
   image_url: string;
+  category: string | null;
   event_date: string | null;
   cta_label: string | null;
   cta_url: string | null;
@@ -38,6 +39,7 @@ function AdminPostersPage() {
   // form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("current");
   const [eventDate, setEventDate] = useState("");
   const [ctaLabel, setCtaLabel] = useState("");
   const [ctaUrl, setCtaUrl] = useState("");
@@ -111,6 +113,7 @@ function AdminPostersPage() {
         title,
         description: description || null,
         image_url: path,
+        category,
         event_date: eventDate || null,
         cta_label: ctaLabel || null,
         cta_url: ctaUrl || null,
@@ -121,6 +124,7 @@ function AdminPostersPage() {
       toast.success("Poster published");
       setTitle("");
       setDescription("");
+      setCategory("current");
       setEventDate("");
       setCtaLabel("");
       setCtaUrl("");
@@ -236,6 +240,18 @@ function AdminPostersPage() {
             />
           </Field>
 
+          <Field label="Category *">
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className={inputCls}
+            >
+              <option value="current">Current</option>
+              <option value="previous">Previous</option>
+              <option value="future">Future</option>
+            </select>
+          </Field>
+
           <Field label="Poster image *">
             <input
               id="poster-file"
@@ -332,7 +348,12 @@ function AdminPostersPage() {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm truncate">{r.title}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-sm truncate">{r.title}</p>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold bg-primary-soft text-primary">
+                        {r.category || "current"}
+                      </span>
+                    </div>
                     {r.event_date && (
                       <p className="text-xs text-muted-foreground">
                         {new Date(r.event_date).toLocaleDateString()}

@@ -46,6 +46,7 @@ export type Database = {
       }
       announcements: {
         Row: {
+          category: string | null
           created_at: string
           created_by: string | null
           cta_label: string | null
@@ -58,6 +59,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category?: string | null
           created_at?: string
           created_by?: string | null
           cta_label?: string | null
@@ -70,6 +72,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category?: string | null
           created_at?: string
           created_by?: string | null
           cta_label?: string | null
