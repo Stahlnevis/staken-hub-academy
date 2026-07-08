@@ -81,16 +81,16 @@ function LoginMenu({ compact }: { compact?: boolean }) {
 function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-      <div className="size-9 sm:size-10 overflow-hidden relative shrink-0">
+      <div className="size-9 sm:size-10 shrink-0">
         <img
           src={logoTeal}
           alt="Staken Hub Academy Logo"
-          className="h-[155%] w-auto max-w-none absolute top-0 left-1/2 -translate-x-1/2 object-contain"
+          className="size-full object-contain"
         />
       </div>
-      <div className="flex flex-col leading-none">
-        <span className="font-display font-bold text-sm sm:text-base tracking-tight text-primary">STAKEN HUB</span>
-        <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.18em] text-muted-foreground mt-0.5">Academy</span>
+      <div className="flex flex-col justify-center">
+        <span className="font-display font-bold text-sm sm:text-base tracking-tight text-primary leading-none">StakenHub</span>
+        <span className="text-[9px] text-muted-foreground mt-0.5 leading-none font-medium">Code. Connect. Protect.</span>
       </div>
     </Link>
   );
@@ -168,16 +168,16 @@ export function SiteFooter() {
       <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 grid gap-12 lg:grid-cols-4 mb-16">
         <div className="lg:col-span-1">
           <div className="flex items-center gap-2.5 mb-5">
-            <div className="bg-white rounded-lg p-1 size-10 overflow-hidden relative flex items-center justify-center">
+            <div className="bg-white rounded-lg p-1 size-10 flex items-center justify-center shrink-0">
               <img
                 src={logoTeal}
                 alt="Staken Hub Academy Logo"
-                className="h-[155%] w-auto max-w-none absolute top-0 left-1/2 -translate-x-1/2 object-contain"
+                className="size-full object-contain"
               />
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="font-display font-bold text-base tracking-tight text-white">STAKEN HUB</span>
-              <span className="text-[9px] uppercase tracking-[0.18em] text-white/70 mt-0.5">Academy</span>
+            <div className="flex flex-col justify-center">
+              <span className="font-display font-bold text-base tracking-tight text-white leading-none">StakenHub</span>
+              <span className="text-[9px] text-white/70 mt-0.5 leading-none font-medium">Code. Connect. Protect.</span>
             </div>
           </div>
           <p className="text-sm text-primary-foreground/70 leading-relaxed mb-6 max-w-xs">
