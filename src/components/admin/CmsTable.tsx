@@ -116,7 +116,19 @@ export function CmsTable({ config }: { config: TableConfig }) {
     setOpen(true);
   };
 
-  const setField = (k: string, v: unknown) => setForm((prev) => ({ ...prev, [k]: v }));
+  const setField = (k: string, v: unknown) => {
+    setForm((prev) => {
+      const next = { ...prev, [k]: v };
+      if (config.table === "coupons" && k === "category") {
+        const progField = config.fields.find((f) => f.key === "programme");
+        if (progField) {
+          const firstOpt = progField.options?.find((opt: any) => opt.group === v);
+          next.programme = firstOpt?.value ?? "";
+        }
+      }
+      return next;
+    });
+  };
 
   const uploadImage = async (fieldKey: string, file: File) => {
     const bucket = config.storageBucket ?? "media";
@@ -249,15 +261,23 @@ export function CmsTable({ config }: { config: TableConfig }) {
             <DialogTitle>{editing ? "Edit" : "New"} — {config.title}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            {config.fields.map((f) => (
-              <FieldInput
-                key={f.key}
-                field={f}
-                value={form[f.key]}
-                onChange={(v) => setField(f.key, v)}
-                onUpload={(file) => uploadImage(f.key, file)}
-              />
-            ))}
+            {config.fields.map((f) => {
+              let fieldToRender = f;
+              if (config.table === "coupons" && f.key === "programme") {
+                const category = (form.category as string) || "programme";
+                const filteredOptions = f.options?.filter((opt: any) => opt.group === category) || [];
+                fieldToRender = { ...f, options: filteredOptions };
+              }
+              return (
+                <FieldInput
+                  key={f.key}
+                  field={fieldToRender}
+                  value={form[f.key]}
+                  onChange={(v) => setField(f.key, v)}
+                  onUpload={(file) => uploadImage(f.key, file)}
+                />
+              );
+            })}
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOpen(false)}>

@@ -53,14 +53,6 @@ export const PROGRAMMES: Programme[] = [
     icon: GraduationCap,
   },
   {
-    slug: "robotics-coding-for-kids",
-    title: "Robotics and Coding for Kids",
-    description: "A fun, hands-on introduction to Scratch coding, logical thinking, electronics, and building simple interactive robots.",
-    duration: "2 Weeks",
-    level: "Beginner",
-    icon: Bot,
-  },
-  {
     slug: "software-engineering",
     title: "Software Engineering",
     description: "Learn full-stack software development, modern web architectures, API integration, and cloud deployment pipelines.",
@@ -72,7 +64,6 @@ export const PROGRAMMES: Programme[] = [
 
 export const COHORTS = [
   { programme: "Programming Languages (C++ & Python)", date: "July 01, 2026", duration: "4 Weeks • Hybrid", mode: "Hybrid" },
-  { programme: "Robotics and Coding for Kids", date: "August Holiday, 2026", duration: "2 Weeks • Weekdays", mode: "Online" },
 ];
 
 export const EVENTS = [

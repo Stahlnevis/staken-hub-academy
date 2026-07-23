@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
@@ -24,10 +24,13 @@ import {
   Trash2,
   Loader2,
   BarChart3,
+  GraduationCap,
+  Ticket,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useCmsRows } from "@/lib/useCmsRows";
 import { CmsTable, type TableConfig } from "@/components/admin/CmsTable";
 import {
   Dialog,
@@ -64,7 +67,9 @@ type SectionKey =
   | "posters"
   | "password"
   | "create_admin"
-  | "stats";
+  | "stats"
+  | "applications"
+  | "coupons";
 
 const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -81,6 +86,8 @@ const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ cl
   { key: "modes", label: "Learning Modes", icon: Palette },
   { key: "values", label: "About Values", icon: Heart },
   { key: "messages", label: "Contact Messages", icon: Mail },
+  { key: "applications", label: "Applications & Payments", icon: GraduationCap },
+  { key: "coupons", label: "Discount Coupons", icon: Ticket },
   { key: "password", label: "Change Password", icon: KeyRound },
   { key: "create_admin", label: "Create Admin", icon: UserPlus },
 ];
@@ -99,12 +106,12 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
       { key: "published", label: "Live" },
     ],
     fields: [
-      { key: "slug", label: "Slug", type: "text", required: true, placeholder: "cybersecurity" },
       { key: "title", label: "Title", type: "text", required: true },
+      { key: "slug", label: "Slug", type: "text", required: true, placeholder: "iot-and-robotics", helper: "URL friendly name (auto-generated from title, e.g. 'iot-and-robotics')" },
       { key: "category", label: "Category", type: "text" },
       { key: "duration", label: "Duration", type: "text", placeholder: "12 weeks" },
       { key: "level", label: "Level", type: "text", placeholder: "Beginner / Intermediate" },
-      { key: "price", label: "Price", type: "text" },
+      { key: "price", label: "Price (KES)", type: "number" },
       { key: "summary", label: "Short Summary", type: "textarea" },
       { key: "description", label: "Full Description", type: "textarea" },
       { key: "outcomes", label: "Learning Outcomes", type: "list", helper: "One per line" },
@@ -128,11 +135,11 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
       { key: "published", label: "Live" },
     ],
     fields: [
-      { key: "slug", label: "Slug", type: "text", required: true },
       { key: "title", label: "Title", type: "text", required: true },
+      { key: "slug", label: "Slug", type: "text", required: true, placeholder: "full-stack-bootcamp", helper: "URL friendly name (auto-generated from title, e.g. 'full-stack-bootcamp')" },
       { key: "duration", label: "Duration", type: "text" },
       { key: "level", label: "Level", type: "text" },
-      { key: "price", label: "Price", type: "text" },
+      { key: "price", label: "Price (KES)", type: "number" },
       { key: "summary", label: "Summary", type: "textarea" },
       { key: "description", label: "Description", type: "textarea" },
       { key: "start_date", label: "Start Date", type: "date" },
@@ -336,11 +343,122 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
       { key: "is_read", label: "Marked as Read", type: "boolean" },
     ],
   },
+  applications: {
+    table: "applications",
+    title: "Student Applications",
+    description: "Manage and track course applications and payments.",
+    orderBy: { column: "created_at", ascending: false },
+    displayColumns: [
+      { key: "first_name", label: "First Name" },
+      { key: "last_name", label: "Last Name" },
+      { key: "email", label: "Email" },
+      { key: "programme", label: "Programme" },
+      { key: "payment_method", label: "Payment Method" },
+      { key: "amount_paid", label: "Amount Paid" },
+      { key: "payment_status", label: "Payment Status" },
+    ],
+    fields: [
+      { key: "first_name", label: "First Name", type: "text", required: true },
+      { key: "last_name", label: "Last Name", type: "text", required: true },
+      { key: "email", label: "Email", type: "text", required: true },
+      { key: "phone", label: "Phone", type: "text", required: true },
+      { key: "programme", label: "Programme", type: "text", required: true },
+      { key: "mode", label: "Preferred Mode", type: "text", required: true },
+      { key: "goals", label: "Goals", type: "textarea" },
+      { key: "coupon_code", label: "Coupon Code", type: "text" },
+      { key: "child_name", label: "Child Name", type: "text" },
+      { key: "child_age", label: "Child Age", type: "text" },
+      { key: "payment_method", label: "Payment Method", type: "text", required: true },
+      { key: "amount_paid", label: "Amount Paid", type: "text", required: true },
+      { key: "payment_status", label: "Payment Status", type: "text", required: true },
+      { key: "mpesa_reference", label: "M-Pesa Reference", type: "text" },
+      { key: "checkout_request_id", label: "Checkout Request ID", type: "text" },
+    ],
+  },
+  coupons: {
+    table: "coupons",
+    title: "Discount Coupons",
+    description: "Manage promo/coupon codes and discount amounts for specific courses.",
+    orderBy: { column: "created_at", ascending: false },
+    displayColumns: [
+      { key: "code", label: "Coupon Code" },
+      { key: "category", label: "Category" },
+      { key: "programme", label: "Applicable Course" },
+      { key: "discount_amount", label: "Discount Amount (KES)" },
+    ],
+    fields: [
+      { key: "code", label: "Coupon Code", type: "text", required: true, placeholder: "e.g. SUMMER50" },
+      {
+        key: "category",
+        label: "Category",
+        type: "select",
+        required: true,
+        options: [
+          { label: "Programmes", value: "programme" },
+          { label: "Bootcamps", value: "bootcamp" },
+          { label: "Corporate Training", value: "corp" },
+        ],
+      },
+      { key: "programme", label: "Applicable Course", type: "select", required: true },
+      { key: "discount_amount", label: "Discount Amount (KES)", type: "number", required: true, placeholder: "e.g. 5000" },
+    ],
+  },
 };
 
 function AdminPage() {
   const [section, setSection] = useState<SectionKey>("dashboard");
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const { rows: programmes } = useCmsRows<any>("programmes", { orderBy: "sort_order" });
+  const { rows: bootcamps } = useCmsRows<any>("bootcamps", { orderBy: "sort_order" });
+  const { rows: corpServices } = useCmsRows<any>("corporate_services", { orderBy: "sort_order" });
+
+  const progOptions = useMemo(() => {
+    if (programmes.length === 0 && bootcamps.length === 0 && corpServices.length === 0) {
+      return [{ label: "Loading courses...", value: "", group: "programme" }];
+    }
+
+    const progOpts = programmes.map((p: any) => ({
+      label: p.title,
+      value: p.title,
+      group: "programme",
+    }));
+
+    const bootcampOpts = bootcamps.map((b: any) => ({
+      label: b.title,
+      value: b.title,
+      group: "bootcamp",
+    }));
+
+    const corpOpts = corpServices.map((c: any) => ({
+      label: c.title,
+      value: c.title,
+      group: "corp",
+    }));
+
+    return [...progOpts, ...bootcampOpts, ...corpOpts];
+  }, [programmes, bootcamps, corpServices]);
+
+  const activeConfig = useMemo(() => {
+    const base = CONFIGS[section];
+    if (!base) return null;
+    if (section === "coupons") {
+      return {
+        ...base,
+        fields: base.fields.map((f) => {
+          if (f.key === "programme") {
+            return {
+              ...f,
+              type: "select" as const,
+              options: progOptions,
+            };
+          }
+          return f;
+        }),
+      };
+    }
+    return base;
+  }, [section, progOptions]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -458,8 +576,8 @@ function AdminPage() {
           <ChangePassword />
         ) : section === "create_admin" ? (
           <CreateAdmin />
-        ) : CONFIGS[section] ? (
-          <CmsTable config={CONFIGS[section]!} />
+        ) : activeConfig ? (
+          <CmsTable config={activeConfig} />
         ) : null}
       </main>
     </div>

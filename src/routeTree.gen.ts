@@ -21,6 +21,7 @@ import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProgrammesIndexRouteImport } from './routes/programmes.index'
 import { Route as ProgrammesSlugRouteImport } from './routes/programmes.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminPostersRouteImport } from './routes/_authenticated/admin.posters'
@@ -84,6 +85,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgrammesIndexRoute = ProgrammesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProgrammesRoute,
+} as any)
 const ProgrammesSlugRoute = ProgrammesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/success-stories': typeof SuccessStoriesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/programmes/$slug': typeof ProgrammesSlugRoute
+  '/programmes/': typeof ProgrammesIndexRoute
   '/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRoutesByTo {
@@ -126,11 +133,11 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
-  '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/programmes/$slug': typeof ProgrammesSlugRoute
+  '/programmes': typeof ProgrammesIndexRoute
   '/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRoutesById {
@@ -149,6 +156,7 @@ export interface FileRoutesById {
   '/success-stories': typeof SuccessStoriesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/programmes/$slug': typeof ProgrammesSlugRoute
+  '/programmes/': typeof ProgrammesIndexRoute
   '/_authenticated/admin/posters': typeof AuthenticatedAdminPostersRoute
 }
 export interface FileRouteTypes {
@@ -167,6 +175,7 @@ export interface FileRouteTypes {
     | '/success-stories'
     | '/admin'
     | '/programmes/$slug'
+    | '/programmes/'
     | '/admin/posters'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -178,11 +187,11 @@ export interface FileRouteTypes {
     | '/contact'
     | '/corporate'
     | '/events'
-    | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
     | '/admin'
     | '/programmes/$slug'
+    | '/programmes'
     | '/admin/posters'
   id:
     | '__root__'
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/success-stories'
     | '/_authenticated/admin'
     | '/programmes/$slug'
+    | '/programmes/'
     | '/_authenticated/admin/posters'
   fileRoutesById: FileRoutesById
 }
@@ -304,6 +314,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/programmes/': {
+      id: '/programmes/'
+      path: '/'
+      fullPath: '/programmes/'
+      preLoaderRoute: typeof ProgrammesIndexRouteImport
+      parentRoute: typeof ProgrammesRoute
+    }
     '/programmes/$slug': {
       id: '/programmes/$slug'
       path: '/$slug'
@@ -352,10 +369,12 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface ProgrammesRouteChildren {
   ProgrammesSlugRoute: typeof ProgrammesSlugRoute
+  ProgrammesIndexRoute: typeof ProgrammesIndexRoute
 }
 
 const ProgrammesRouteChildren: ProgrammesRouteChildren = {
   ProgrammesSlugRoute: ProgrammesSlugRoute,
+  ProgrammesIndexRoute: ProgrammesIndexRoute,
 }
 
 const ProgrammesRouteWithChildren = ProgrammesRoute._addFileChildren(
