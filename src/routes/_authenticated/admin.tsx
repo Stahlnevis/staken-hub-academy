@@ -355,6 +355,7 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
       { key: "programme", label: "Programme" },
       { key: "payment_method", label: "Payment Method" },
       { key: "amount_paid", label: "Amount Paid" },
+      { key: "mpesa_reference", label: "M-Pesa Ref / Code" },
       { key: "payment_status", label: "Payment Status" },
     ],
     fields: [

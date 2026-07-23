@@ -59,6 +59,7 @@ function ApplyPage() {
   const [paymentAmount, setPaymentAmount] = useState(0);
   const [mpesaPhone, setMpesaPhone] = useState("");
   const [stkStatus, setStkStatus] = useState<"idle" | "initiating" | "prompted" | "success" | "failed">("idle");
+  const [lastMpesaReceipt, setLastMpesaReceipt] = useState("");
 
   // Coupons State
   const [couponCode, setCouponCode] = useState("");
@@ -226,13 +227,23 @@ function ApplyPage() {
     const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 seconds timeout
 
     try {
-      // Initiate STK Push via Supabase Edge Function
+      // Initiate STK Push via Supabase Edge Function.
+      // We pass all student data here so the edge function can pre-insert the
+      // application row BEFORE the STK push fires. This guarantees the row
+      // exists in DB when Safaricom fires the callback with the real receipt code.
       const { data: res, error: invokeErr } = await supabase.functions.invoke("mpesa", {
         body: {
           action: "initiate",
           phone: mpesaPhone,
           amount: effectiveAmount,
           programme: selectedProgramme,
+          // Student data for pre-insert in edge function
+          firstName: applicationData?.firstName || "",
+          lastName: applicationData?.lastName || "",
+          email: applicationData?.email || "",
+          mode: applicationData?.mode || "Online",
+          goals: applicationData?.goals || "",
+          couponCode: couponCode || null,
         },
         abortSignal: controller.signal,
       });
@@ -248,6 +259,7 @@ function ApplyPage() {
       if (res && res.ResponseCode === "0") {
         setStkStatus("prompted");
         const checkoutRequestId = res.CheckoutRequestID;
+        // Application row is already pre-inserted by the edge function above.
 
         // Start polling Safaricom for payment confirmation
         let attempts = 0;
@@ -279,27 +291,42 @@ function ApplyPage() {
               setIsSubmitting(true);
               const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "";
 
-              // Insert application data to Supabase
+              // Safaricom's query endpoint does NOT return the receipt code (MpesaReceiptNumber).
+              // The real receipt code (e.g. UGNKU0EL6T) is ONLY sent via Safaricom's Callback.
+              // Poll the DB for up to 15s to get the real code written by the callback.
+              let mpesaRef = "";
+              for (let i = 0; i < 5; i++) {
+                await new Promise((r) => setTimeout(r, 3000));
+                try {
+                  const { data: appRow } = await supabase
+                    .from("applications")
+                    .select("mpesa_reference")
+                    .eq("checkout_request_id", checkoutRequestId)
+                    .maybeSingle();
+
+                  const ref = appRow?.mpesa_reference || "";
+                  if (ref && ref !== "Pending PIN" && !ref.startsWith("ws_CO_") && !ref.startsWith("kensab")) {
+                    mpesaRef = ref; // Real receipt code from callback (e.g. UGNKU0EL6T)
+                    break;
+                  }
+                } catch (_) {}
+              }
+
+              // Show real receipt if found, otherwise show empty (avoid showing ws_CO_... to user)
+              setLastMpesaReceipt(mpesaRef);
+
+              // Update application with confirmed status and receipt
               try {
-                await supabase.from("applications").insert({
-                  first_name: applicationData.firstName,
-                  last_name: applicationData.lastName,
-                  email: applicationData.email,
-                  phone: applicationData.phone,
-                  programme: selectedProgramme,
-                  mode: applicationData.mode || "Online",
-                  goals: applicationData.goals,
-                  coupon_code: couponCode || null,
-                  child_name: null,
-                  child_age: null,
-                  payment_method: "M-Pesa Auto Pay",
-                  amount_paid: `KES ${paymentAmount.toLocaleString()}`,
-                  payment_status: "Completed",
-                  mpesa_reference: "kensab collection",
-                  checkout_request_id: checkoutRequestId,
-                });
+                await supabase
+                  .from("applications")
+                  .update({
+                    amount_paid: `KES ${paymentAmount.toLocaleString()}`,
+                    payment_status: "Completed",
+                    ...(mpesaRef ? { mpesa_reference: mpesaRef } : {}),
+                  })
+                  .eq("checkout_request_id", checkoutRequestId);
               } catch (dbErr) {
-                console.error("Supabase insert error:", dbErr);
+                console.error("Supabase update error:", dbErr);
               }
 
               try {
@@ -319,7 +346,7 @@ function ApplyPage() {
                     amountPaid: `KES ${paymentAmount.toLocaleString()}`,
                     tuitionPrice: `KES ${finalPrice.toLocaleString()}`,
                     couponCode: couponCode || "None",
-                    transactionReference: "kensab collection",
+                    transactionReference: mpesaRef || "(Receipt code sent to applicant via SMS)",
                     checkoutRequestId: checkoutRequestId,
                     paymentStatus: "Completed",
                   }),
@@ -327,7 +354,6 @@ function ApplyPage() {
                 setStep("success");
               } catch (err) {
                 console.error("Web3Forms error:", err);
-                // Go to success anyway since the payment cleared
                 setStep("success");
               } finally {
                 setIsSubmitting(false);
@@ -465,21 +491,53 @@ function ApplyPage() {
                 <CheckCircle2 className="size-8" />
               </div>
               <div className="space-y-3">
-                <h3 className="font-display font-bold text-2xl sm:text-3xl text-primary">
-                  Check your email!
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Your credentials and portal login instructions will be sent to your email address shortly so you can log into your{" "}
-                  <a
-                    href="https://academy.stakenhub.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-primary hover:underline"
-                  >
-                    academy portal
-                  </a>
-                  . Our admissions team at <span className="font-semibold text-primary">admissions@stakenhub.com</span> will also reach out to help you finish your onboarding.
-                </p>
+                {paymentType === "paypal" ? (
+                  <>
+                    <h3 className="font-display font-bold text-2xl sm:text-3xl text-primary">
+                      Invoice on its way!
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      An invoice has been sent to your email address. Please complete the payment via <span className="font-semibold text-primary">PayPal or Visa / MasterCard</span> using the link in the email.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Once your payment is confirmed, you'll receive your portal login credentials to access your{" "}
+                      <a
+                        href="https://academy.stakenhub.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-primary hover:underline"
+                      >
+                        academy portal
+                      </a>
+                      . Our admissions team at <span className="font-semibold text-primary">admissions@stakenhub.com</span> is available if you need any help.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="font-display font-bold text-2xl sm:text-3xl text-primary">
+                      Check your email!
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Your credentials and portal login instructions will be sent to your email address shortly so you can log into your{" "}
+                      <a
+                        href="https://academy.stakenhub.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-primary hover:underline"
+                      >
+                        academy portal
+                      </a>
+                      . Our admissions team at <span className="font-semibold text-primary">admissions@stakenhub.com</span> will also reach out to help you finish your onboarding.
+                    </p>
+                    {lastMpesaReceipt && (
+                      <div className="pt-2">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-mint/15 text-primary text-xs font-bold border border-mint/20">
+                          M-Pesa Receipt Code: <code className="font-mono text-xs">{lastMpesaReceipt}</code>
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
               <div className="pt-4">
                 <Link

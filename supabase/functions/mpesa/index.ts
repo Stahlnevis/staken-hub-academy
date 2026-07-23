@@ -1,4 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,22 +8,20 @@ const corsHeaders = {
 };
 
 function formatPhoneNumber(phone: string): string {
-  let cleaned = phone.replace(/[^\d]/g, "");
+  let cleaned = phone.replace(/[\s\-\+]/g, "").replace(/[^\d]/g, "");
   if (cleaned.startsWith("0")) {
     cleaned = "254" + cleaned.slice(1);
   } else if (cleaned.startsWith("7") || cleaned.startsWith("1")) {
     cleaned = "254" + cleaned;
-  } else if (cleaned.startsWith("+254")) {
-    cleaned = cleaned.slice(1);
   } else if (cleaned.startsWith("254") && cleaned.length === 12) {
-    // correct
+    // already correct
   } else {
     cleaned = "254" + cleaned;
   }
   return cleaned;
 }
 
-function getMpesaTimestamp(): string {
+function generateTimestamp(): string {
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: "Africa/Nairobi",
     year: "numeric",
@@ -38,7 +37,7 @@ function getMpesaTimestamp(): string {
   return `${part("year")}${part("month")}${part("day")}${part("hour")}${part("minute")}${part("second")}`;
 }
 
-async function getMpesaToken(): Promise<string> {
+async function getOAuthToken(): Promise<string> {
   const consumerKey = Deno.env.get("MPESA_CONSUMER_KEY");
   const consumerSecret = Deno.env.get("MPESA_CONSUMER_SECRET");
 
@@ -48,12 +47,15 @@ async function getMpesaToken(): Promise<string> {
 
   const credentials = btoa(`${consumerKey}:${consumerSecret}`);
   const res = await fetch("https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials", {
+    method: "GET",
     headers: {
       Authorization: `Basic ${credentials}`,
     },
   });
 
   if (!res.ok) {
+    const errorText = await res.text();
+    console.error("M-Pesa OAuth error:", errorText);
     throw new Error(`Failed to generate M-Pesa token: ${res.statusText}`);
   }
 
@@ -62,49 +64,60 @@ async function getMpesaToken(): Promise<string> {
 }
 
 serve(async (req) => {
-  // Handle CORS Preflight request
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { action, ...data } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const action = body.action || "initiate";
 
+    const shortcode = Deno.env.get("MPESA_SHORTCODE") || Deno.env.get("MPESA_SHORT_CODE") || "4048051";
+    const passkey = Deno.env.get("MPESA_PASSKEY");
+    const transactionType = Deno.env.get("MPESA_TRANSACTION_TYPE") || "CustomerPayBillOnline";
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "https://lkebnghhbgptfswoihcy.supabase.co";
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+    if (!passkey) {
+      throw new Error("Missing M-Pesa Passkey in Supabase secrets.");
+    }
+
+    // ─── INITIATE: Send STK Push to customer's phone ───────────────────────────
     if (action === "initiate") {
-      const token = await getMpesaToken();
-      const shortcode = Deno.env.get("MPESA_SHORTCODE") || "4048051";
-      const passkey = Deno.env.get("MPESA_PASSKEY");
-
-      if (!passkey) {
-        throw new Error("Missing M-Pesa Passkey in Supabase secrets.");
-      }
-
-      const formattedPhone = formatPhoneNumber(data.phone);
-      const timestamp = getMpesaTimestamp();
-
+      const token = await getOAuthToken();
+      const formattedPhone = formatPhoneNumber(body.phone || body.phone_number || "");
+      const timestamp = generateTimestamp();
       const password = btoa(`${shortcode}${passkey}${timestamp}`);
 
-        // Sanitize programme name: strip special chars, collapse spaces, max 20 chars (Safaricom limit)
-        const safeProg = (data.programme as string || "")
-          .replace(/[^a-zA-Z0-9 ]/g, "")   // remove special chars like &
-          .replace(/\s+/g, "-")            // spaces → hyphens
-          .substring(0, 20);              // max 20 chars
+      const numericAmount = Math.round(Number(body.amount));
+      if (numericAmount <= 0) throw new Error("Amount must be greater than zero");
 
-        const payload = {
-          BusinessShortCode: shortcode,
-          Password: password,
-          Timestamp: timestamp,
-          TransactionType: "CustomerBuyGoodsOnline",
-          Amount: Math.round(data.amount),
-          PartyA: formattedPhone,
-          PartyB: shortcode,
-          PhoneNumber: formattedPhone,
-          CallBackURL: "https://stakenhub.com/api/mpesa-callback",
-          AccountReference: safeProg || "KensabAcademy",
-          TransactionDesc: "Tuition-Payment",
-        };
+      // Sanitize account reference — strips XML-unsafe chars, max 12 chars
+      const rawRef = body.programme || body.accountReference || "StakenHub";
+      const safeRef = String(rawRef)
+        .replace(/[&<>"']/g, "")
+        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .trim()
+        .substring(0, 12) || "StakenHub";
 
-      console.log("Initiating M-Pesa STK Push in Edge Function:", { ...payload, Password: "***" });
+      // CallBackURL points to the dedicated mpesa-callback function (no-verify-jwt)
+      const callbackUrl = `${supabaseUrl}/functions/v1/mpesa-callback`;
+
+      const stkPayload = {
+        BusinessShortCode: shortcode,
+        Password: password,
+        Timestamp: timestamp,
+        TransactionType: transactionType,
+        Amount: numericAmount,
+        PartyA: formattedPhone,
+        PartyB: shortcode,
+        PhoneNumber: formattedPhone,
+        CallBackURL: callbackUrl,
+        AccountReference: safeRef,
+        TransactionDesc: "TuitionPayment",
+      };
+
+      console.log("Initiating STK Push:", JSON.stringify({ ...stkPayload, Password: "***" }));
 
       const res = await fetch("https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
         method: "POST",
@@ -112,11 +125,11 @@ serve(async (req) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(stkPayload),
       });
 
       const responseText = await res.text();
-      console.log("M-Pesa STK Response:", responseText);
+      console.log("STK Push Response:", responseText);
 
       if (!res.ok) {
         return new Response(JSON.stringify({ error: responseText }), {
@@ -125,29 +138,88 @@ serve(async (req) => {
         });
       }
 
+      const stkData = JSON.parse(responseText);
+
+      // ── Pre-insert the application row BEFORE Safaricom can fire the callback ──
+      // This guarantees the row exists in DB when mpesa-callback tries to update it.
+      if (stkData.ResponseCode === "0" && stkData.CheckoutRequestID && supabaseUrl && supabaseServiceKey) {
+        try {
+          const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+            auth: { autoRefreshToken: false, persistSession: false },
+          });
+
+          const { error: insertErr } = await supabaseAdmin.from("applications").insert({
+            first_name: body.firstName || "",
+            last_name: body.lastName || "",
+            email: body.email || "",
+            phone: body.phone || formattedPhone,
+            programme: body.programme || "",
+            mode: body.mode || "Online",
+            goals: body.goals || "",
+            coupon_code: body.couponCode || null,
+            child_name: null,
+            child_age: null,
+            payment_method: "M-Pesa Auto Pay",
+            amount_paid: `KES ${numericAmount.toLocaleString()}`,
+            payment_status: "Pending",
+            mpesa_reference: "Pending",
+            checkout_request_id: stkData.CheckoutRequestID,
+          });
+
+          if (insertErr) {
+            console.error("Pre-insert application error:", JSON.stringify(insertErr));
+          } else {
+            console.log(`Pre-inserted application for CheckoutRequestID: ${stkData.CheckoutRequestID}`);
+          }
+        } catch (dbErr: any) {
+          console.error("DB pre-insert error:", dbErr.message);
+        }
+      }
+
       return new Response(responseText, {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // ─── QUERY: Check if customer has entered PIN and payment is done ──────────
     if (action === "query") {
-      const token = await getMpesaToken();
-      const shortcode = Deno.env.get("MPESA_SHORTCODE") || "4048051";
-      const passkey = Deno.env.get("MPESA_PASSKEY");
+      const token = await getOAuthToken();
+      const timestamp = generateTimestamp();
+      const password = btoa(`${shortcode}${passkey}${timestamp}`);
+      const checkoutRequestId = body.checkoutRequestId || body.CheckoutRequestID;
 
-      if (!passkey) {
-        throw new Error("Missing M-Pesa Passkey in Supabase secrets.");
+      if (!checkoutRequestId) {
+        throw new Error("Missing checkoutRequestId in query request");
       }
 
-      const timestamp = getMpesaTimestamp();
+      // Check DB first — mpesa-callback may have already written the real receipt
+      let dbReceiptNumber = "";
+      if (supabaseUrl && supabaseServiceKey) {
+        try {
+          const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+            auth: { autoRefreshToken: false, persistSession: false },
+          });
+          const { data: appRow } = await supabaseAdmin
+            .from("applications")
+            .select("mpesa_reference")
+            .eq("checkout_request_id", checkoutRequestId)
+            .maybeSingle();
 
-      const password = btoa(`${shortcode}${passkey}${timestamp}`);
+          const ref = appRow?.mpesa_reference || "";
+          if (ref && ref !== "Pending" && ref !== "Pending PIN" && !ref.startsWith("ws_CO_")) {
+            dbReceiptNumber = ref;
+            console.log(`Found real receipt in DB: ${dbReceiptNumber}`);
+          }
+        } catch (dbErr) {
+          console.error("DB lookup error:", dbErr);
+        }
+      }
 
-      const payload = {
+      const queryPayload = {
         BusinessShortCode: shortcode,
         Password: password,
         Timestamp: timestamp,
-        CheckoutRequestID: data.checkoutRequestId,
+        CheckoutRequestID: checkoutRequestId,
       };
 
       const res = await fetch("https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query", {
@@ -156,51 +228,80 @@ serve(async (req) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(queryPayload),
       });
 
       const responseText = await res.text();
-      console.log("M-Pesa query response:", responseText);
+      console.log("STK Query Response:", responseText);
+
+      let resData: any = {};
+      try {
+        resData = JSON.parse(responseText);
+      } catch (_) {}
+
+      const msg = (
+        resData.ResultDesc ||
+        resData.ResponseDescription ||
+        resData.errorMessage ||
+        ""
+      ).toLowerCase();
+
+      const errCode = String(resData.ResultCode ?? resData.errorCode ?? resData.ResponseCode ?? "");
+
+      // Transaction is still waiting for PIN entry on handset
+      const isProcessing =
+        errCode === "500.002.1001" ||
+        msg.includes("processing") ||
+        msg.includes("being processed") ||
+        msg.includes("under processing") ||
+        msg.includes("in progress") ||
+        msg.includes("not found");
+
+      if (isProcessing) {
+        return new Response(
+          JSON.stringify({
+            status: "pending",
+            data: resData,
+            message: resData.ResultDesc || resData.ResponseDescription || resData.errorMessage || "Transaction is still under processing",
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
       if (!res.ok) {
-        try {
-          const errObj = JSON.parse(responseText);
-          if (
-            errObj.errorCode === "500.002.1001" ||
-            errObj.errorMessage?.toLowerCase().includes("being processed") ||
-            errObj.errorMessage?.toLowerCase().includes("not found")
-          ) {
-            return new Response(JSON.stringify({ status: "pending", message: errObj.errorMessage }), {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
-          }
-        } catch (_) {}
-
         return new Response(JSON.stringify({ error: responseText }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      const resData = JSON.parse(responseText);
-
       let status = "pending";
-      if (resData.ResultCode === "0") {
+      if (errCode === "0" || resData.ResultCode === "0") {
         status = "success";
-      } else if (resData.ResultCode) {
+      } else if (resData.ResultCode !== undefined && resData.ResultCode !== null) {
         status = "failed";
       }
 
-      return new Response(JSON.stringify({ status, data: resData, message: resData.ResultDesc }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          status,
+          data: resData,
+          // NOTE: Safaricom query does NOT return MpesaReceiptNumber.
+          // Real receipt comes ONLY via mpesa-callback. We return what's in DB.
+          mpesaReceiptNumber: dbReceiptNumber,
+          message: resData.ResultDesc || resData.ResponseDescription || resData.errorMessage,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    return new Response(JSON.stringify({ error: "Invalid action" }), {
+    return new Response(JSON.stringify({ error: "Invalid action. Use 'initiate' or 'query'." }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
   } catch (error: any) {
+    console.error("M-Pesa function error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
