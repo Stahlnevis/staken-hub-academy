@@ -25,9 +25,10 @@ function AuthPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const instSlug = params.get("institution") || params.get("inst") || localStorage.getItem("staken_selected_institution");
+    const instSlug = params.get("institution") || params.get("inst");
     if (instSlug) {
       const cleanSlug = instSlug.trim().toLowerCase();
+      // Only write to localStorage if the institution came from the URL, never read it back
       localStorage.setItem("staken_selected_institution", cleanSlug);
       (async () => {
         const { data: exact } = await supabase
@@ -37,6 +38,9 @@ function AuthPage() {
           .maybeSingle();
         if (exact) setSelectedInstitution(exact as any);
       })();
+    } else {
+      // No institution in URL — clear any cached institution so next visit starts fresh
+      localStorage.removeItem("staken_selected_institution");
     }
   }, []);
 
