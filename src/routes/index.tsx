@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
   ArrowRight, CheckCircle2, Users, GraduationCap, Sparkles,
   Laptop, Sun, Quote,
@@ -92,6 +92,17 @@ type Stat = { id: string; label: string; value: number; suffix: string };
 function HomePage() {
   const { rows: stories } = useCmsRows<Story>("success_stories", { orderBy: "sort_order", limit: 3 });
   const { rows: stats } = useCmsRows<Stat>("stats", { orderBy: "sort_order" });
+  const { rows: pageContent } = useCmsRows<any>("page_content");
+
+  const nextCohortData = useMemo(() => {
+    const row = pageContent.find((r: any) => r.page_key === "home" && r.section_key === "next_cohort");
+    return {
+      badge: row?.content?.badge || "Enrollment Open — Q3 2026 Cohorts",
+      date_text: row?.content?.date_text || "Sept 15, 2026",
+      label: row?.content?.label || "Next cohort",
+    };
+  }, [pageContent]);
+
   return (
     <SiteLayout>
       {/* HERO */}
@@ -100,7 +111,7 @@ function HomePage() {
           <div className="animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-mint/15 border border-mint/30 text-primary text-xs font-bold uppercase tracking-widest mb-6">
               <span className="size-2 bg-mint rounded-full animate-pulse" />
-              Enrollment Open — Q3 2026 Cohorts
+              {nextCohortData.badge}
             </div>
             <h1 className="font-display font-black text-4xl md:text-5xl lg:text-6xl text-primary leading-tight mb-6 tracking-tight">
               Empowering Africa through digital skills
@@ -137,8 +148,8 @@ function HomePage() {
                   <Sparkles className="size-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Next cohort</p>
-                  <p className="text-sm font-semibold text-primary">Sept 15, 2026</p>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground">{nextCohortData.label}</p>
+                  <p className="text-sm font-semibold text-primary">{nextCohortData.date_text}</p>
                 </div>
               </div>
             </div>

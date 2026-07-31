@@ -26,6 +26,8 @@ import {
   BarChart3,
   GraduationCap,
   Ticket,
+  Calendar,
+  Building,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,6 +55,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 type SectionKey =
   | "dashboard"
+  | "next_cohort"
   | "programmes"
   | "bootcamps"
   | "team"
@@ -73,6 +76,7 @@ type SectionKey =
 
 const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { key: "next_cohort", label: "Next Cohort & Banner", icon: Calendar },
   { key: "programmes", label: "Programmes", icon: BookOpen },
   { key: "bootcamps", label: "Bootcamps", icon: Rocket },
   { key: "announcements", label: "Event Posters", icon: Megaphone },
@@ -573,6 +577,8 @@ function AdminPage() {
               Open the poster upload page →
             </Link>
           </div>
+        ) : section === "next_cohort" ? (
+          <NextCohortSettings />
         ) : section === "password" ? (
           <ChangePassword />
         ) : section === "create_admin" ? (
@@ -922,6 +928,148 @@ function CreateAdmin() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function NextCohortSettings() {
+  const [badge, setBadge] = useState("Enrollment Open — Q3 2026 Cohorts");
+  const [dateText, setDateText] = useState("Sept 15, 2026");
+  const [label, setLabel] = useState("Next cohort");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await (supabase as any)
+          .from("page_content")
+          .select("content")
+          .eq("page_key", "home")
+          .eq("section_key", "next_cohort")
+          .maybeSingle();
+
+        if (data && data.content) {
+          const c = data.content;
+          if (c.badge) setBadge(c.badge);
+          if (c.date_text) setDateText(c.date_text);
+          if (c.label) setLabel(c.label);
+        }
+      } catch (err) {
+        console.error("Error loading next cohort settings:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const { data: existing } = await (supabase as any)
+        .from("page_content")
+        .select("id")
+        .eq("page_key", "home")
+        .eq("section_key", "next_cohort")
+        .maybeSingle();
+
+      if (existing?.id) {
+        const { error } = await (supabase as any)
+          .from("page_content")
+          .update({
+            content: { badge, date_text: dateText, label },
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any)
+          .from("page_content")
+          .insert([
+            {
+              page_key: "home",
+              section_key: "next_cohort",
+              content: { badge, date_text: dateText, label },
+            },
+          ]);
+        if (error) throw error;
+      }
+
+      toast.success("Next Cohort settings updated live on the website!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update settings");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-xl">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="size-10 rounded-xl bg-primary/10 grid place-items-center text-primary">
+          <Calendar className="size-5" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-display font-bold text-primary">Next Cohort & Banner</h1>
+          <p className="text-sm text-muted-foreground">
+            Update the next cohort start date and hero banner text on the homepage.
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSave} className="space-y-5 bg-card border border-border p-6 rounded-2xl shadow-sm mt-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-foreground">Hero Badge Banner Text</label>
+          <input
+            type="text"
+            value={badge}
+            onChange={(e) => setBadge(e.target.value)}
+            className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+            placeholder="e.g. Enrollment Open — Q3 2026 Cohorts"
+            required
+          />
+          <p className="text-[11px] text-muted-foreground">Appears at the top of the homepage hero section.</p>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-foreground">Next Cohort Date Text</label>
+          <input
+            type="text"
+            value={dateText}
+            onChange={(e) => setDateText(e.target.value)}
+            className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+            placeholder="e.g. Sept 15, 2026"
+            required
+          />
+          <p className="text-[11px] text-muted-foreground">Displayed on the floating card next to the homepage hero image.</p>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-foreground">Cohort Card Subtitle / Label</label>
+          <input
+            type="text"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+            placeholder="e.g. Next cohort"
+            required
+          />
+        </div>
+
+        <Button type="submit" disabled={saving} className="w-full mt-4">
+          {saving ? <Loader2 className="size-4 animate-spin mr-2" /> : null}
+          Save & Publish Live
+        </Button>
+      </form>
     </div>
   );
 }

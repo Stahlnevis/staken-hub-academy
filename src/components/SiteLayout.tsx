@@ -37,6 +37,8 @@ const NAV = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
+import { InstitutionsMenu } from "@/components/InstitutionsModal";
+
 function LoginMenu({ compact }: { compact?: boolean }) {
   return (
     <DropdownMenu>
@@ -114,6 +116,7 @@ export function SiteHeader() {
               {n.label}
             </Link>
           ))}
+          <InstitutionsMenu />
         </nav>
         <div className="flex items-center gap-2 justify-end">
           <LoginMenu compact />

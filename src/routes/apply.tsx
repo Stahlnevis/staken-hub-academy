@@ -13,9 +13,15 @@ import {
   Info,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
 import { useCmsRows } from "@/lib/useCmsRows";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+// Connect to LMS Backend Supabase for dynamic institutions (xsuktootskxsanncmbtd)
+const LMS_SUPABASE_URL = "https://xsuktootskxsanncmbtd.supabase.co";
+const LMS_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzdWt0b290c2t4c2FubmNtYnRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4Nzg3MTgsImV4cCI6MjA5NjQ1NDcxOH0.DoMXLGWnew1QZxRNpjTX2BlhKRkqWpp4Ij3_LaltL20";
+const lmsSupabase = createClient(LMS_SUPABASE_URL, LMS_SUPABASE_ANON_KEY);
 
 export const Route = createFileRoute("/apply")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -51,6 +57,36 @@ function ApplyPage() {
   const search = Route.useSearch();
   const [selectedProgramme, setSelectedProgramme] = useState("");
   const [applyCategory, setApplyCategory] = useState<"programme" | "bootcamp" | "corp">("programme");
+
+  // Dynamic Institutions State
+  const [dbInstitutions, setDbInstitutions] = useState<{ id: string; name: string; slug: string }[]>([]);
+  const [selectedInstitution, setSelectedInstitution] = useState("Staken Hub Academy");
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const { data } = await lmsSupabase
+          .from("institutions")
+          .select("id, name, slug")
+          .eq("is_active", true)
+          .order("name", { ascending: true });
+
+        if (alive && data && data.length > 0) {
+          setDbInstitutions(data);
+          const params = new URLSearchParams(window.location.search);
+          const instParam = params.get("institution") || params.get("inst");
+          if (instParam) {
+            const match = data.find((i) => i.slug === instParam.toLowerCase() || i.name.toLowerCase().includes(instParam.toLowerCase()));
+            if (match) setSelectedInstitution(match.name);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching institutions:", err);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   // Payment State
   const [paymentType, setPaymentType] = useState<"mpesa" | "paypal">("mpesa");
@@ -237,6 +273,7 @@ function ApplyPage() {
           phone: mpesaPhone,
           amount: effectiveAmount,
           programme: selectedProgramme,
+          institution: applicationData?.institution || selectedInstitution,
           // Student data for pre-insert in edge function
           firstName: applicationData?.firstName || "",
           lastName: applicationData?.lastName || "",
@@ -416,8 +453,9 @@ function ApplyPage() {
         },
         body: JSON.stringify({
           access_key: accessKey || "YOUR_WEB3FORMS_ACCESS_KEY_HERE",
-          subject: `Invoice Request & Application - ${selectedProgramme}`,
+          subject: `[${applicationData?.institution || selectedInstitution}] Application & Invoice Request - ${selectedProgramme}`,
           from_name: "Staken Hub Admissions Alert",
+          target_institution_academy: applicationData?.institution || selectedInstitution,
           ...applicationData,
           paymentMethod: "PayPal / Visa Card (Invoice Request)",
           amountRequested: `KES ${paymentAmount.toLocaleString()}`,
@@ -437,6 +475,7 @@ function ApplyPage() {
             email: applicationData.email,
             phone: applicationData.phone,
             programme: selectedProgramme,
+            institution: applicationData.institution || selectedInstitution,
             mode: applicationData.mode || "Online",
             goals: applicationData.goals,
             coupon_code: couponCode || null,
@@ -874,6 +913,34 @@ function ApplyPage() {
               <div className="grid sm:grid-cols-2 gap-5">
                 <Input name="email" type="email" label="Email" disabled={isSubmitting} />
                 <Input name="phone" type="tel" label="Phone" disabled={isSubmitting} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-primary mb-1.5">Target Institution / Partner Academy</label>
+                <select
+                  name="institution"
+                  value={selectedInstitution}
+                  onChange={(e) => setSelectedInstitution(e.target.value)}
+                  className="w-full bg-input-bg border border-input rounded-xl px-4 py-3 text-sm font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-mint/30 cursor-pointer"
+                  disabled={isSubmitting}
+                >
+                  {dbInstitutions.length > 0 ? (
+                    dbInstitutions.map((inst) => (
+                      <option key={inst.id} value={inst.name}>
+                        {inst.name}
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Staken Hub Academy">Staken Hub Academy</option>
+                      <option value="Girls i Save Academy">Girls i Save Academy</option>
+                      <option value="Daitan Consultancy Academy">Daitan Consultancy Academy</option>
+                    </>
+                  )}
+                </select>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Select which academy or partner institution you are applying to join.
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-primary mb-2">Registration Category</label>
