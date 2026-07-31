@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProgrammesRouteImport } from './routes/programmes'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as CorporateRouteImport } from './routes/corporate'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -39,6 +40,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ProgrammesRoute = ProgrammesRouteImport.update({
   id: '/programmes',
   path: '/programmes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
+  '/login': typeof LoginRoute
   '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
+  '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
+  '/login': typeof LoginRoute
   '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/corporate'
     | '/events'
+    | '/login'
     | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/corporate'
     | '/events'
+    | '/login'
     | '/sitemap.xml'
     | '/success-stories'
     | '/admin'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/corporate'
     | '/events'
+    | '/login'
     | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
   EventsRoute: typeof EventsRoute
+  LoginRoute: typeof LoginRoute
   ProgrammesRoute: typeof ProgrammesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuccessStoriesRoute: typeof SuccessStoriesRoute
@@ -249,6 +262,13 @@ declare module '@tanstack/react-router' {
       path: '/programmes'
       fullPath: '/programmes'
       preLoaderRoute: typeof ProgrammesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
   EventsRoute: EventsRoute,
+  LoginRoute: LoginRoute,
   ProgrammesRoute: ProgrammesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuccessStoriesRoute: SuccessStoriesRoute,

@@ -94,12 +94,12 @@ export function InstitutionsMenu({ compact }: InstitutionsMenuProps) {
 
   const getAcademyUrl = (slug: string) => 
     isLocal 
-      ? `http://localhost:8081/login?institution=${encodeURIComponent(slug)}`
+      ? `${window.location.origin}/login?institution=${encodeURIComponent(slug)}`
       : `https://academy.stakenhub.com/login?institution=${encodeURIComponent(slug)}`;
 
   const getPortalUrl = (slug: string) => 
     isLocal 
-      ? `http://localhost:8082/login?institution=${encodeURIComponent(slug)}`
+      ? `${window.location.protocol}//${window.location.hostname}:8082/login?institution=${encodeURIComponent(slug)}`
       : `https://portal.stakenhub.com/login?institution=${encodeURIComponent(slug)}`;
 
   return (
