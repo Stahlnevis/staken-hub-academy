@@ -82,17 +82,17 @@ function LoginMenu({ compact }: { compact?: boolean }) {
 
 function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-      <div className="size-9 sm:size-10 shrink-0">
+    <Link to="/" className="flex items-center gap-3 sm:gap-3.5 shrink-0 py-1">
+      <div className="h-12 sm:h-14 md:h-16 w-auto shrink-0 flex items-center">
         <img
           src={logoTeal}
           alt="Staken Hub Academy Logo"
-          className="size-full object-contain"
+          className="h-12 sm:h-14 md:h-16 w-auto object-contain max-h-16"
         />
       </div>
       <div className="flex flex-col justify-center">
-        <span className="font-display font-bold text-sm sm:text-base tracking-tight text-primary leading-none">StakenHub</span>
-        <span className="text-[9px] text-muted-foreground mt-0.5 leading-none font-medium">Code. Connect. Protect.</span>
+        <span className="font-display font-extrabold text-base sm:text-lg md:text-xl tracking-tight text-primary leading-tight">StakenHub</span>
+        <span className="text-[10px] sm:text-xs text-muted-foreground leading-none font-semibold">Code. Connect. Protect.</span>
       </div>
     </Link>
   );
