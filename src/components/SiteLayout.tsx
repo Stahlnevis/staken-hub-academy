@@ -22,10 +22,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-const LOGIN_LINKS = [
-  { label: "Online Academy", href: "https://academy.stakenhub.com/" },
-  { label: "Student Portal", href: "https://portal.stakenhub.com/login" },
-] as const;
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -40,6 +36,21 @@ const NAV = [
 import { InstitutionsMenu } from "@/components/InstitutionsModal";
 
 function LoginMenu({ compact }: { compact?: boolean }) {
+  const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+  const academyUrl = isLocal 
+    ? `${window.location.origin}/login` 
+    : "https://academy.stakenhub.com/login";
+
+  const portalUrl = isLocal 
+    ? `${window.location.protocol}//${window.location.hostname}:8082/login` 
+    : "https://portal.stakenhub.com/login";
+
+  const links = [
+    { label: "Online Academy", href: academyUrl },
+    { label: "Student Portal", href: portalUrl },
+  ];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -63,7 +74,7 @@ function LoginMenu({ compact }: { compact?: boolean }) {
         align="end"
         className="w-56 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200"
       >
-        {LOGIN_LINKS.map((link) => (
+        {links.map((link) => (
           <DropdownMenuItem key={link.label} asChild>
             <a
               href={link.href}
