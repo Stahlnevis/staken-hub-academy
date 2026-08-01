@@ -94,7 +94,7 @@ export function InstitutionsMenu({ compact }: InstitutionsMenuProps) {
 
   const getAcademyUrl = (slug: string) => 
     isLocal 
-      ? `${window.location.origin}/login?institution=${encodeURIComponent(slug)}`
+      ? `${window.location.protocol}//${window.location.hostname}:8080/login?institution=${encodeURIComponent(slug)}`
       : `https://academy.stakenhub.com/login?institution=${encodeURIComponent(slug)}`;
 
   const getPortalUrl = (slug: string) => 
