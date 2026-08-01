@@ -58,6 +58,7 @@ interface InstitutionsMenuProps {
 export function InstitutionsMenu({ compact }: InstitutionsMenuProps) {
   const [selectedInst, setSelectedInst] = useState<InstitutionItem | null>(null);
   const [dbInstitutions, setDbInstitutions] = useState<InstitutionItem[] | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -105,21 +106,29 @@ export function InstitutionsMenu({ compact }: InstitutionsMenuProps) {
   return (
     <>
       {compact ? (
-        /* Mobile flat list — renders inline, no nested dropdown */
+        /* Mobile accordion — collapsed by default, opens on click */
         <div className="flex flex-col gap-0.5">
-          <div className="px-3 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-            <Building2 className="size-3.5 text-primary" />
-            Institutions
-          </div>
-          {institutionsList.map((inst) => (
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="w-full px-3 py-2.5 rounded-lg text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors flex items-center justify-between"
+          >
+            <span className="flex items-center gap-1.5">
+              <Building2 className="size-4 text-primary" />
+              Institutions
+            </span>
+            <ChevronDown
+              className={`size-4 opacity-60 transition-transform duration-200 ${mobileOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+          {mobileOpen && institutionsList.map((inst) => (
             <button
               key={inst.slug}
               type="button"
               onClick={() => setSelectedInst(inst)}
-              className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors flex items-center justify-between"
+              className="w-full text-left px-5 py-2 rounded-lg text-sm text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
             >
-              <span>{inst.name}</span>
-              <Sparkles className="size-3.5 text-primary opacity-50 shrink-0" />
+              {inst.name}
             </button>
           ))}
         </div>
