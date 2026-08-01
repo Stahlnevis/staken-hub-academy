@@ -161,6 +161,10 @@ export function SiteHeader() {
                 {n.label}
               </Link>
             ))}
+            {/* Institutions — visible in mobile menu */}
+            <div className="border-t border-border/60 mt-2 pt-2">
+              <InstitutionsMenu compact />
+            </div>
             <Link
               to="/apply"
               onClick={() => setOpen(false)}

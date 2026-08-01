@@ -104,36 +104,57 @@ export function InstitutionsMenu({ compact }: InstitutionsMenuProps) {
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs xl:text-sm font-bold text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
-          >
-            <Building2 className="size-4 text-primary" />
-            <span>Institutions</span>
-            <ChevronDown className="size-3.5 opacity-70" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-64 p-2">
-          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Partner Academies
+      {compact ? (
+        /* Mobile flat list — renders inline, no nested dropdown */
+        <div className="flex flex-col gap-0.5">
+          <div className="px-3 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+            <Building2 className="size-3.5 text-primary" />
+            Institutions
           </div>
           {institutionsList.map((inst) => (
-            <DropdownMenuItem
+            <button
               key={inst.slug}
+              type="button"
               onClick={() => setSelectedInst(inst)}
-              className="cursor-pointer flex flex-col items-start gap-0.5 p-2.5 rounded-lg hover:bg-primary/5 transition-colors"
+              className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors flex items-center justify-between"
             >
-              <div className="flex items-center justify-between w-full">
-                <span className="font-semibold text-sm text-foreground">{inst.name}</span>
-                <Sparkles className="size-3.5 text-primary opacity-60" />
-              </div>
-              <span className="text-xs text-muted-foreground line-clamp-1">{inst.description}</span>
-            </DropdownMenuItem>
+              <span>{inst.name}</span>
+              <Sparkles className="size-3.5 text-primary opacity-50 shrink-0" />
+            </button>
           ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </div>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs xl:text-sm font-bold text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
+            >
+              <Building2 className="size-4 text-primary" />
+              <span>Institutions</span>
+              <ChevronDown className="size-3.5 opacity-70" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-64 p-2">
+            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Partner Academies
+            </div>
+            {institutionsList.map((inst) => (
+              <DropdownMenuItem
+                key={inst.slug}
+                onClick={() => setSelectedInst(inst)}
+                className="cursor-pointer flex flex-col items-start gap-0.5 p-2.5 rounded-lg hover:bg-primary/5 transition-colors"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-semibold text-sm text-foreground">{inst.name}</span>
+                  <Sparkles className="size-3.5 text-primary opacity-60" />
+                </div>
+                <span className="text-xs text-muted-foreground line-clamp-1">{inst.description}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
 
       {/* Selected Institution Detail Modal */}
       <Dialog open={!!selectedInst} onOpenChange={(open) => !open && setSelectedInst(null)}>
