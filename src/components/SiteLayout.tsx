@@ -130,7 +130,6 @@ export function SiteHeader() {
           <InstitutionsMenu />
         </nav>
         <div className="flex items-center gap-2 justify-end">
-          <LoginMenu compact />
           <Link
             to="/apply"
             className="hidden sm:inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground px-5 h-10 text-sm font-semibold hover:bg-teal-deep transition-colors shadow-elegant"
