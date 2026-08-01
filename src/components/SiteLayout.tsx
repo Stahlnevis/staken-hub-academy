@@ -39,12 +39,12 @@ function LoginMenu({ compact }: { compact?: boolean }) {
   const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
   const academyUrl = isLocal 
-    ? `${window.location.origin}/login?institution=stakenhub` 
-    : "https://academy.stakenhub.com/login?institution=stakenhub";
+    ? `${window.location.origin}/login` 
+    : "https://academy.stakenhub.com/login";
 
   const portalUrl = isLocal 
-    ? `${window.location.protocol}//${window.location.hostname}:8082/login?institution=stakenhub` 
-    : "https://portal.stakenhub.com/login?institution=stakenhub";
+    ? `${window.location.protocol}//${window.location.hostname}:8082/login` 
+    : "https://portal.stakenhub.com/login";
 
   const links = [
     { label: "Online Academy", href: academyUrl },
