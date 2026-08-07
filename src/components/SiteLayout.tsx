@@ -138,6 +138,42 @@ function TeachMenu() {
   );
 }
 
+function MobileTeachMenu({ onClose }: { onClose: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-t border-border/60 mt-2 pt-2">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full px-3 py-2.5 rounded-lg text-sm font-semibold text-foreground hover:bg-primary-soft hover:text-primary flex items-center justify-between cursor-pointer"
+      >
+        <span>Teach</span>
+        <ChevronDown className={cn("size-4 transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div className="pl-3 pr-2 py-1 space-y-1 border-l-2 border-primary/20 ml-3 mt-1 animate-in fade-in-0 slide-in-from-top-1 duration-150">
+          <Link
+            to="/teach"
+            search={{ type: "academy" }}
+            onClick={onClose}
+            className="px-3 py-2 rounded-lg text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/10 block"
+          >
+            Become an academy
+          </Link>
+          <Link
+            to="/teach"
+            search={{ type: "instructor" }}
+            onClick={onClose}
+            className="px-3 py-2 rounded-lg text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/10 block"
+          >
+            Become an instructor
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
@@ -191,26 +227,7 @@ export function SiteHeader() {
                 {n.label}
               </Link>
             ))}
-            {/* Teach options in mobile menu */}
-            <div className="border-t border-border/60 mt-2 pt-2 space-y-1">
-              <span className="px-3 text-xs font-bold text-muted-foreground uppercase tracking-wider block">Teach</span>
-              <Link
-                to="/teach"
-                search={{ type: "academy" }}
-                onClick={() => setOpen(false)}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-primary-soft hover:text-primary block"
-              >
-                Become an academy
-              </Link>
-              <Link
-                to="/teach"
-                search={{ type: "instructor" }}
-                onClick={() => setOpen(false)}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-primary-soft hover:text-primary block"
-              >
-                Become an instructor
-              </Link>
-            </div>
+            <MobileTeachMenu onClose={() => setOpen(false)} />
             {/* Institutions — visible in mobile menu */}
             <div className="border-t border-border/60 mt-2 pt-2">
               <InstitutionsMenu compact />
