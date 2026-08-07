@@ -198,48 +198,34 @@ Terms Accepted: YES (Policy Version 1.0)
           }),
         });
 
-        // 2. Save lean reference record to Supabase
-        const { error: dbError } = await (supabase as any).from("academy_applications").insert({
-          organization_name: academyData.organization_name,
-          contact_person: academyData.contact_person,
-          position: academyData.position,
-          email: academyData.email,
-          phone: academyData.phone,
-          website: academyData.website,
-          country: academyData.country,
-          city: academyData.city,
-          physical_address: academyData.physical_address,
-          org_type: academyData.org_type,
-          year_established: academyData.year_established,
-          num_students: academyData.num_students,
-          num_instructors: academyData.num_instructors,
-          training_areas: finalAreas,
-          uses_lms: academyData.uses_lms,
-          partner_rationale: academyData.partner_rationale,
-          hear_about_us: academyData.hear_about_us,
-          documents_url: academyData.documents_url,
-          status: "Pending",
-          terms_accepted: true,
-          policy_version: "1.0",
-          full_details: payload,
-        });
-
-        if (dbError) {
-          console.warn("Database record notice:", dbError);
-          // Fallback to legacy applications table if new schema isn't created yet
-          if (dbError.code === "PGRST205" || dbError.message?.includes("not find")) {
-            try {
-              await (supabase as any).from("applications").insert({
-                type: "Academy",
-                applicant_name: academyData.contact_person,
-                email: academyData.email,
-                phone: academyData.phone,
-                institution: academyData.organization_name,
-                details: payload,
-                status: "pending",
-              });
-            } catch {}
-          }
+        // 2. Save lean reference record to Supabase (non-blocking)
+        try {
+          await (supabase as any).from("academy_applications").insert({
+            organization_name: academyData.organization_name,
+            contact_person: academyData.contact_person,
+            position: academyData.position,
+            email: academyData.email,
+            phone: academyData.phone,
+            website: academyData.website,
+            country: academyData.country,
+            city: academyData.city,
+            physical_address: academyData.physical_address,
+            org_type: academyData.org_type,
+            year_established: academyData.year_established,
+            num_students: academyData.num_students,
+            num_instructors: academyData.num_instructors,
+            training_areas: finalAreas,
+            uses_lms: academyData.uses_lms,
+            partner_rationale: academyData.partner_rationale,
+            hear_about_us: academyData.hear_about_us,
+            documents_url: academyData.documents_url,
+            status: "Pending",
+            terms_accepted: true,
+            policy_version: "1.0",
+            full_details: payload,
+          });
+        } catch (dbErr) {
+          console.warn("Supabase record notice:", dbErr);
         }
       } else {
         // Instructor Submission
@@ -286,42 +272,30 @@ Terms Accepted: YES (Policy Version 1.0)
           }),
         });
 
-        // 2. Save lean reference record to Supabase
-        const { error: dbError } = await (supabase as any).from("instructor_applications").insert({
-          full_name: instructorData.full_name,
-          email: instructorData.email,
-          phone: instructorData.phone,
-          country: instructorData.country,
-          city: instructorData.city,
-          education_level: instructorData.education_level,
-          occupation: instructorData.occupation,
-          teaching_experience_years: instructorData.teaching_experience_years,
-          teaching_areas: finalAreas,
-          certifications: instructorData.certifications,
-          teaching_experience_details: instructorData.teaching_experience_details,
-          cv_link: instructorData.cv_link,
-          linkedin_profile: instructorData.linkedin_profile,
-          portfolio_website: instructorData.portfolio_website,
-          status: "Pending",
-          terms_accepted: true,
-          policy_version: "1.0",
-          full_details: payload,
-        });
-
-        if (dbError) {
-          console.warn("Database record notice:", dbError);
-          if (dbError.code === "PGRST205" || dbError.message?.includes("not find")) {
-            try {
-              await (supabase as any).from("applications").insert({
-                type: "Instructor",
-                applicant_name: instructorData.full_name,
-                email: instructorData.email,
-                phone: instructorData.phone,
-                details: payload,
-                status: "pending",
-              });
-            } catch {}
-          }
+        // 2. Save lean reference record to Supabase (non-blocking)
+        try {
+          await (supabase as any).from("instructor_applications").insert({
+            full_name: instructorData.full_name,
+            email: instructorData.email,
+            phone: instructorData.phone,
+            country: instructorData.country,
+            city: instructorData.city,
+            education_level: instructorData.education_level,
+            occupation: instructorData.occupation,
+            teaching_experience_years: instructorData.teaching_experience_years,
+            teaching_areas: finalAreas,
+            certifications: instructorData.certifications,
+            teaching_experience_details: instructorData.teaching_experience_details,
+            cv_link: instructorData.cv_link,
+            linkedin_profile: instructorData.linkedin_profile,
+            portfolio_website: instructorData.portfolio_website,
+            status: "Pending",
+            terms_accepted: true,
+            policy_version: "1.0",
+            full_details: payload,
+          });
+        } catch (dbErr) {
+          console.warn("Supabase record notice:", dbErr);
         }
       }
 
