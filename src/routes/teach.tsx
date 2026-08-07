@@ -16,7 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, academySupabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/teach")({
@@ -143,6 +143,9 @@ function TeachPage() {
     });
   };
 
+  // CV File Upload State
+  const [cvFile, setCvFile] = useState<File | null>(null);
+
   // Validation helpers
   const isAcademyPage1Valid = Boolean(
     academyData.organization_name.trim() &&
@@ -175,7 +178,8 @@ function TeachPage() {
     instructorData.occupation.trim() &&
     instructorData.teaching_experience_years.trim() &&
     instructorData.teaching_experience_details.trim() &&
-    (instructorData.teaching_areas.length > 0 || instructorData.other_area.trim())
+    (instructorData.teaching_areas.length > 0 || instructorData.other_area.trim()) &&
+    (cvFile !== null || instructorData.cv_link.trim() !== "")
   );
 
   // Submit Handler
@@ -243,42 +247,78 @@ Terms Accepted: YES (Policy Version 1.0)
           }),
         });
 
-        // 2. Save lean reference record to Supabase (non-blocking)
+        // 2. Save reference record to Supabase (chained to both databases)
+        const academyRecord = {
+          organization_name: academyData.organization_name,
+          contact_person: academyData.contact_person,
+          position: academyData.position,
+          email: academyData.email,
+          phone: academyData.phone,
+          website: academyData.website,
+          country: academyData.country,
+          city: academyData.city,
+          physical_address: academyData.physical_address,
+          org_type: academyData.org_type,
+          year_established: academyData.year_established,
+          num_students: academyData.num_students,
+          num_instructors: academyData.num_instructors,
+          training_areas: finalAreas,
+          uses_lms: academyData.uses_lms,
+          partner_rationale: academyData.partner_rationale,
+          hear_about_us: academyData.hear_about_us,
+          documents_url: academyData.documents_url,
+          status: "Pending",
+          terms_accepted: true,
+          policy_version: "1.0",
+          full_details: payload,
+        };
+
         try {
-          await (supabase as any).from("academy_applications").insert({
-            organization_name: academyData.organization_name,
-            contact_person: academyData.contact_person,
-            position: academyData.position,
-            email: academyData.email,
-            phone: academyData.phone,
-            website: academyData.website,
-            country: academyData.country,
-            city: academyData.city,
-            physical_address: academyData.physical_address,
-            org_type: academyData.org_type,
-            year_established: academyData.year_established,
-            num_students: academyData.num_students,
-            num_instructors: academyData.num_instructors,
-            training_areas: finalAreas,
-            uses_lms: academyData.uses_lms,
-            partner_rationale: academyData.partner_rationale,
-            hear_about_us: academyData.hear_about_us,
-            documents_url: academyData.documents_url,
-            status: "Pending",
-            terms_accepted: true,
-            policy_version: "1.0",
-            full_details: payload,
-          });
+          await (academySupabase as any).from("academy_applications").insert(academyRecord);
         } catch (dbErr) {
-          console.warn("Supabase record notice:", dbErr);
+          console.warn("Academy DB record notice:", dbErr);
         }
+
+        try {
+          await (supabase as any).from("academy_applications").insert(academyRecord);
+        } catch (_) {}
       } else {
         // Instructor Submission
         const finalAreas = [...instructorData.teaching_areas];
         if (instructorData.other_area.trim()) finalAreas.push(`Other: ${instructorData.other_area.trim()}`);
 
+        let finalCvUrl = instructorData.cv_link;
+        if (cvFile) {
+          try {
+            const cleanName = cvFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+            const storagePath = `cvs/${Date.now()}_${cleanName}`;
+            
+            // Upload to academySupabase storage
+            const { error: uploadErr } = await (academySupabase as any).storage
+              .from("documents")
+              .upload(storagePath, cvFile, { upsert: true });
+
+            if (uploadErr) {
+              console.warn("Academy storage upload notice:", uploadErr);
+              // Fallback upload to native website storage
+              await (supabase as any).storage.from("documents").upload(storagePath, cvFile, { upsert: true });
+            }
+
+            const { data } = (academySupabase as any).storage
+              .from("documents")
+              .getPublicUrl(storagePath);
+
+            if (data?.publicUrl) {
+              finalCvUrl = data.publicUrl;
+            }
+          } catch (storageException) {
+            console.warn("CV upload exception:", storageException);
+          }
+        }
+
         const payload = {
           ...instructorData,
+          cv_link: finalCvUrl,
           teaching_areas: finalAreas,
           terms_accepted: true,
           policy_version: "1.0",
@@ -309,7 +349,7 @@ Areas Can Teach: ${finalAreas.join(", ")}
 QUALIFICATIONS & LINKS:
 Professional Certifications: ${instructorData.certifications}
 Teaching Experience Details: ${instructorData.teaching_experience_details}
-CV Link: ${instructorData.cv_link || "N/A"}
+Uploaded CV Document: ${finalCvUrl || "None provided"}
 LinkedIn Profile: ${instructorData.linkedin_profile || "N/A"}
 Portfolio / Website: ${instructorData.portfolio_website || "N/A"}
 Terms Accepted: YES (Policy Version 1.0)
@@ -317,31 +357,37 @@ Terms Accepted: YES (Policy Version 1.0)
           }),
         });
 
-        // 2. Save lean reference record to Supabase (non-blocking)
+        // 2. Save reference record to chained Supabase databases
+        const instructorRecord = {
+          full_name: instructorData.full_name,
+          email: instructorData.email,
+          phone: instructorData.phone,
+          country: instructorData.country,
+          city: instructorData.city,
+          education_level: instructorData.education_level,
+          occupation: instructorData.occupation,
+          teaching_experience_years: instructorData.teaching_experience_years,
+          teaching_areas: finalAreas,
+          certifications: instructorData.certifications,
+          teaching_experience_details: instructorData.teaching_experience_details,
+          cv_link: finalCvUrl,
+          linkedin_profile: instructorData.linkedin_profile,
+          portfolio_website: instructorData.portfolio_website,
+          status: "Pending",
+          terms_accepted: true,
+          policy_version: "1.0",
+          full_details: payload,
+        };
+
         try {
-          await (supabase as any).from("instructor_applications").insert({
-            full_name: instructorData.full_name,
-            email: instructorData.email,
-            phone: instructorData.phone,
-            country: instructorData.country,
-            city: instructorData.city,
-            education_level: instructorData.education_level,
-            occupation: instructorData.occupation,
-            teaching_experience_years: instructorData.teaching_experience_years,
-            teaching_areas: finalAreas,
-            certifications: instructorData.certifications,
-            teaching_experience_details: instructorData.teaching_experience_details,
-            cv_link: instructorData.cv_link,
-            linkedin_profile: instructorData.linkedin_profile,
-            portfolio_website: instructorData.portfolio_website,
-            status: "Pending",
-            terms_accepted: true,
-            policy_version: "1.0",
-            full_details: payload,
-          });
+          await (academySupabase as any).from("instructor_applications").insert(instructorRecord);
         } catch (dbErr) {
-          console.warn("Supabase record notice:", dbErr);
+          console.warn("Academy DB instructor notice:", dbErr);
         }
+
+        try {
+          await (supabase as any).from("instructor_applications").insert(instructorRecord);
+        } catch (_) {}
       }
 
       toast.success("Application submitted successfully!");
@@ -1226,15 +1272,64 @@ Terms Accepted: YES (Policy Version 1.0)
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold uppercase text-foreground mb-1">CV / Resume Link (Include URL)</label>
-                  <input
-                    type="url"
-                    value={instructorData.cv_link}
-                    onChange={(e) => setInstructorData({ ...instructorData, cv_link: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm font-medium"
-                    placeholder="Google Drive, Dropbox link..."
-                  />
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold uppercase text-foreground mb-1">
+                    Upload CV / Resume Document (PDF, DOC, DOCX) *
+                  </label>
+                  <div className="border-2 border-dashed border-border hover:border-primary/50 transition-all rounded-2xl p-4 bg-muted/20 text-center">
+                    <input
+                      type="file"
+                      id="cv_file_input_element"
+                      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setCvFile(e.target.files[0]);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    {cvFile ? (
+                      <div className="flex items-center justify-between bg-card p-3 rounded-xl border border-border">
+                        <div className="flex items-center gap-3 text-left">
+                          <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+                            <FileText className="size-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-foreground truncate max-w-[200px] sm:max-w-[380px]">
+                              {cvFile.name}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground font-semibold">
+                              {(cvFile.size / 1024).toFixed(1)} KB — Selected for upload
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setCvFile(null)}
+                          className="text-xs font-bold text-destructive hover:underline px-2 py-1 cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="cv_file_input_element"
+                        className="cursor-pointer flex flex-col items-center justify-center py-2.5 gap-2"
+                      >
+                        <div className="p-3 bg-primary/10 text-primary rounded-full">
+                          <Upload className="size-5" />
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-primary hover:underline">
+                            Click here to select and upload your CV / Resume file
+                          </span>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">
+                            Supports PDF or Word documents (.pdf, .doc, .docx)
+                          </p>
+                        </div>
+                      </label>
+                    )}
+                  </div>
                 </div>
 
                 <div>
