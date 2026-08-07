@@ -228,15 +228,17 @@ Terms Accepted: YES (Policy Version 1.0)
           console.warn("Database record notice:", dbError);
           // Fallback to legacy applications table if new schema isn't created yet
           if (dbError.code === "PGRST205" || dbError.message?.includes("not find")) {
-            await (supabase as any).from("applications").insert({
-              type: "Academy",
-              applicant_name: academyData.contact_person,
-              email: academyData.email,
-              phone: academyData.phone,
-              institution: academyData.organization_name,
-              details: payload,
-              status: "pending",
-            }).catch(() => {});
+            try {
+              await (supabase as any).from("applications").insert({
+                type: "Academy",
+                applicant_name: academyData.contact_person,
+                email: academyData.email,
+                phone: academyData.phone,
+                institution: academyData.organization_name,
+                details: payload,
+                status: "pending",
+              });
+            } catch {}
           }
         }
       } else {
@@ -309,14 +311,16 @@ Terms Accepted: YES (Policy Version 1.0)
         if (dbError) {
           console.warn("Database record notice:", dbError);
           if (dbError.code === "PGRST205" || dbError.message?.includes("not find")) {
-            await (supabase as any).from("applications").insert({
-              type: "Instructor",
-              applicant_name: instructorData.full_name,
-              email: instructorData.email,
-              phone: instructorData.phone,
-              details: payload,
-              status: "pending",
-            }).catch(() => {});
+            try {
+              await (supabase as any).from("applications").insert({
+                type: "Instructor",
+                applicant_name: instructorData.full_name,
+                email: instructorData.email,
+                phone: instructorData.phone,
+                details: payload,
+                status: "pending",
+              });
+            } catch {}
           }
         }
       }
