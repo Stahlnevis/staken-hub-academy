@@ -28,6 +28,9 @@ import {
   Ticket,
   Calendar,
   Building,
+  UserCheck,
+  FileSignature,
+  ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,7 +75,10 @@ type SectionKey =
   | "create_admin"
   | "stats"
   | "applications"
-  | "coupons";
+  | "coupons"
+  | "academy_apps"
+  | "instructor_apps"
+  | "student_agreements";
 
 const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -90,7 +96,10 @@ const SECTIONS: { key: SectionKey; label: string; icon: React.ComponentType<{ cl
   { key: "modes", label: "Learning Modes", icon: Palette },
   { key: "values", label: "About Values", icon: Heart },
   { key: "messages", label: "Contact Messages", icon: Mail },
-  { key: "applications", label: "Applications & Payments", icon: GraduationCap },
+  { key: "applications", label: "Course Applications", icon: GraduationCap },
+  { key: "academy_apps", label: "Partner Academies", icon: Building },
+  { key: "instructor_apps", label: "Instructor Applications", icon: UserCheck },
+  { key: "student_agreements", label: "Student Terms Audit", icon: FileSignature },
   { key: "coupons", label: "Discount Coupons", icon: Ticket },
   { key: "password", label: "Change Password", icon: KeyRound },
   { key: "create_admin", label: "Create Admin", icon: UserPlus },
@@ -406,6 +415,108 @@ const CONFIGS: Partial<Record<SectionKey, TableConfig>> = {
       },
       { key: "programme", label: "Applicable Course", type: "select", required: true },
       { key: "discount_amount", label: "Discount Amount (KES)", type: "number", required: true, placeholder: "e.g. 5000" },
+    ],
+  },
+  academy_apps: {
+    table: "academy_applications",
+    title: "Partner Academy Applications",
+    description: "Manage applications submitted by institutions and academies.",
+    orderBy: { column: "created_at", ascending: false },
+    displayColumns: [
+      { key: "organization_name", label: "Organization" },
+      { key: "contact_person", label: "Contact Person" },
+      { key: "email", label: "Email" },
+      { key: "phone", label: "Phone" },
+      { key: "country", label: "Country font-semibold" },
+      { key: "status", label: "Status" },
+      { key: "created_at", label: "Applied On" },
+    ],
+    fields: [
+      { key: "organization_name", label: "Organization Name", type: "text", required: true },
+      { key: "contact_person", label: "Contact Person", type: "text", required: true },
+      { key: "position", label: "Position / Title", type: "text" },
+      { key: "email", label: "Email", type: "text", required: true },
+      { key: "phone", label: "Phone", type: "text", required: true },
+      { key: "country", label: "Country", type: "text", required: true },
+      { key: "city", label: "City", type: "text", required: true },
+      { key: "physical_address", label: "Physical Address", type: "text" },
+      { key: "org_type", label: "Organization Type", type: "text" },
+      { key: "num_students", label: "Number of Students", type: "text" },
+      { key: "num_instructors", label: "Number of Instructors", type: "text" },
+      { key: "uses_lms", label: "Uses LMS", type: "text" },
+      { key: "partner_rationale", label: "Why Partner", type: "textarea" },
+      { key: "documents_url", label: "Documents Link", type: "text" },
+      {
+        key: "status",
+        label: "Status",
+        type: "select",
+        required: true,
+        options: [
+          { label: "Pending", value: "Pending" },
+          { label: "Approved", value: "Approved" },
+          { label: "Rejected", value: "Rejected" },
+        ],
+      },
+      { key: "admin_notes", label: "Admin Notes", type: "textarea" },
+    ],
+  },
+  instructor_apps: {
+    table: "instructor_applications",
+    title: "Instructor Applications",
+    description: "Manage applications from expert instructor candidates.",
+    orderBy: { column: "created_at", ascending: false },
+    displayColumns: [
+      { key: "full_name", label: "Full Name" },
+      { key: "email", label: "Email" },
+      { key: "phone", label: "Phone" },
+      { key: "country", label: "Country" },
+      { key: "education_level", label: "Education" },
+      { key: "status", label: "Status" },
+      { key: "created_at", label: "Applied On" },
+    ],
+    fields: [
+      { key: "full_name", label: "Full Name", type: "text", required: true },
+      { key: "email", label: "Email Address", type: "text", required: true },
+      { key: "phone", label: "Phone Number", type: "text", required: true },
+      { key: "country", label: "Country", type: "text", required: true },
+      { key: "city", label: "City", type: "text", required: true },
+      { key: "education_level", label: "Highest Education", type: "text" },
+      { key: "occupation", label: "Current Occupation", type: "text" },
+      { key: "teaching_experience_years", label: "Teaching Experience", type: "text" },
+      { key: "certifications", label: "Certifications", type: "textarea" },
+      { key: "teaching_experience_details", label: "Experience Details", type: "textarea" },
+      { key: "cv_link", label: "CV / Resume Link", type: "text" },
+      { key: "linkedin_profile", label: "LinkedIn Profile", type: "text" },
+      { key: "portfolio_website", label: "Portfolio / Website", type: "text" },
+      {
+        key: "status",
+        label: "Status",
+        type: "select",
+        required: true,
+        options: [
+          { label: "Pending", value: "Pending" },
+          { label: "Approved", value: "Approved" },
+          { label: "Rejected", value: "Rejected" },
+        ],
+      },
+      { key: "admin_notes", label: "Admin Notes", type: "textarea" },
+    ],
+  },
+  student_agreements: {
+    table: "student_agreements",
+    title: "Student Terms & Agreements Audit",
+    description: "Compliance audit log of student Terms & Conditions acceptances.",
+    orderBy: { column: "accepted_at", ascending: false },
+    displayColumns: [
+      { key: "full_name", label: "Student Name" },
+      { key: "email", label: "Email Address" },
+      { key: "policy_version", label: "Policy Version" },
+      { key: "accepted_at", label: "Accepted At" },
+    ],
+    fields: [
+      { key: "full_name", label: "Student Name", type: "text" },
+      { key: "email", label: "Email Address", type: "text", required: true },
+      { key: "policy_version", label: "Policy Version", type: "text" },
     ],
   },
 };

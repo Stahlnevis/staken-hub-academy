@@ -109,6 +109,35 @@ function Logo() {
   );
 }
 
+function TeachMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Teach menu"
+          className="relative whitespace-nowrap px-2.5 py-1.5 rounded-md hover:text-primary hover:bg-primary/10 transition-colors inline-flex items-center gap-1 cursor-pointer font-bold text-muted-foreground hover:text-primary"
+        >
+          <span>Teach</span>
+          <ChevronDown className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56 p-1.5">
+        <DropdownMenuItem asChild>
+          <Link to="/teach" search={{ type: "academy" }} className="w-full cursor-pointer py-2 px-3 text-sm font-medium">
+            Become an academy
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/teach" search={{ type: "instructor" }} className="w-full cursor-pointer py-2 px-3 text-sm font-medium">
+            Become an instructor
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
@@ -127,6 +156,7 @@ export function SiteHeader() {
               {n.label}
             </Link>
           ))}
+          <TeachMenu />
           <InstitutionsMenu />
         </nav>
         <div className="flex items-center gap-2 justify-end">
@@ -161,6 +191,26 @@ export function SiteHeader() {
                 {n.label}
               </Link>
             ))}
+            {/* Teach options in mobile menu */}
+            <div className="border-t border-border/60 mt-2 pt-2 space-y-1">
+              <span className="px-3 text-xs font-bold text-muted-foreground uppercase tracking-wider block">Teach</span>
+              <Link
+                to="/teach"
+                search={{ type: "academy" }}
+                onClick={() => setOpen(false)}
+                className="px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-primary-soft hover:text-primary block"
+              >
+                Become an academy
+              </Link>
+              <Link
+                to="/teach"
+                search={{ type: "instructor" }}
+                onClick={() => setOpen(false)}
+                className="px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-primary-soft hover:text-primary block"
+              >
+                Become an instructor
+              </Link>
+            </div>
             {/* Institutions — visible in mobile menu */}
             <div className="border-t border-border/60 mt-2 pt-2">
               <InstitutionsMenu compact />

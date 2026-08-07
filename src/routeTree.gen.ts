@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TeachRouteImport } from './routes/teach'
 import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProgrammesRouteImport } from './routes/programmes'
@@ -27,6 +28,11 @@ import { Route as ProgrammesSlugRouteImport } from './routes/programmes.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminPostersRouteImport } from './routes/_authenticated/admin.posters'
 
+const TeachRoute = TeachRouteImport.update({
+  id: '/teach',
+  path: '/teach',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuccessStoriesRoute = SuccessStoriesRouteImport.update({
   id: '/success-stories',
   path: '/success-stories',
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
+  '/teach': typeof TeachRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/programmes/$slug': typeof ProgrammesSlugRoute
   '/programmes/': typeof ProgrammesIndexRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
+  '/teach': typeof TeachRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/programmes/$slug': typeof ProgrammesSlugRoute
   '/programmes': typeof ProgrammesIndexRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/programmes': typeof ProgrammesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success-stories': typeof SuccessStoriesRoute
+  '/teach': typeof TeachRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/programmes/$slug': typeof ProgrammesSlugRoute
   '/programmes/': typeof ProgrammesIndexRoute
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
+    | '/teach'
     | '/admin'
     | '/programmes/$slug'
     | '/programmes/'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/sitemap.xml'
     | '/success-stories'
+    | '/teach'
     | '/admin'
     | '/programmes/$slug'
     | '/programmes'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/programmes'
     | '/sitemap.xml'
     | '/success-stories'
+    | '/teach'
     | '/_authenticated/admin'
     | '/programmes/$slug'
     | '/programmes/'
@@ -239,10 +251,18 @@ export interface RootRouteChildren {
   ProgrammesRoute: typeof ProgrammesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuccessStoriesRoute: typeof SuccessStoriesRoute
+  TeachRoute: typeof TeachRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/teach': {
+      id: '/teach'
+      path: '/teach'
+      fullPath: '/teach'
+      preLoaderRoute: typeof TeachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/success-stories': {
       id: '/success-stories'
       path: '/success-stories'
@@ -415,6 +435,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProgrammesRoute: ProgrammesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuccessStoriesRoute: SuccessStoriesRoute,
+  TeachRoute: TeachRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
