@@ -143,8 +143,53 @@ function TeachPage() {
     });
   };
 
+  // Validation helpers
+  const isAcademyPage1Valid = Boolean(
+    academyData.organization_name.trim() &&
+    academyData.contact_person.trim() &&
+    academyData.email.trim() &&
+    academyData.phone.trim() &&
+    academyData.country.trim() &&
+    academyData.city.trim() &&
+    academyData.physical_address.trim()
+  );
+
+  const isAcademyPage2Valid = Boolean(
+    academyData.org_type.trim() &&
+    (academyData.training_areas.length > 0 || academyData.other_area.trim())
+  );
+
+  const isAcademyPage3Valid = Boolean(
+    academyData.partner_rationale.trim()
+  );
+
+  const isAcademyFormValid = isAcademyPage1Valid && isAcademyPage2Valid && isAcademyPage3Valid;
+
+  const isInstructorFormValid = Boolean(
+    instructorData.full_name.trim() &&
+    instructorData.email.trim() &&
+    instructorData.phone.trim() &&
+    instructorData.country.trim() &&
+    instructorData.city.trim() &&
+    instructorData.education_level.trim() &&
+    instructorData.occupation.trim() &&
+    instructorData.teaching_experience_years.trim() &&
+    instructorData.teaching_experience_details.trim() &&
+    (instructorData.teaching_areas.length > 0 || instructorData.other_area.trim())
+  );
+
   // Submit Handler
   const handleSubmitApplication = async () => {
+    if (applicantType === "academy" && !isAcademyFormValid) {
+      toast.error("Please complete all required fields marked with * before submitting.");
+      return;
+    }
+
+    if (applicantType === "instructor" && !isInstructorFormValid) {
+      toast.error("Please complete all required fields marked with * before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
     const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "68a85024-c2c2-4eca-a212-52221f2d0a17";
     const refCode = "STK-" + Math.floor(100000 + Math.random() * 900000);
@@ -754,9 +799,13 @@ Terms Accepted: YES (Policy Version 1.0)
                   <div className="flex justify-end pt-4">
                     <button
                       type="button"
-                      disabled={!academyData.organization_name || !academyData.contact_person || !academyData.email}
+                      disabled={!isAcademyPage1Valid}
                       onClick={() => setAcademyPage(2)}
-                      className="px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold hover:bg-teal-deep transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className={`px-6 py-3 rounded-full font-bold transition-all flex items-center gap-2 ${
+                        isAcademyPage1Valid
+                          ? "bg-primary text-primary-foreground hover:bg-teal-deep shadow cursor-pointer"
+                          : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                      }`}
                     >
                       Next: Organization Details
                       <ArrowRight className="size-4" />
@@ -912,9 +961,13 @@ Terms Accepted: YES (Policy Version 1.0)
                     </button>
                     <button
                       type="button"
-                      disabled={!academyData.partner_rationale}
+                      disabled={!isAcademyPage2Valid}
                       onClick={() => setAcademyPage(3)}
-                      className="px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold hover:bg-teal-deep transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className={`px-6 py-3 rounded-full font-bold transition-all flex items-center gap-2 ${
+                        isAcademyPage2Valid
+                          ? "bg-primary text-primary-foreground hover:bg-teal-deep shadow cursor-pointer"
+                          : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                      }`}
                     >
                       Next: Review & Submit
                       <ArrowRight className="size-4" />
@@ -982,9 +1035,13 @@ Terms Accepted: YES (Policy Version 1.0)
                     </button>
                     <button
                       type="button"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !isAcademyFormValid}
                       onClick={handleSubmitApplication}
-                      className="px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-bold hover:bg-teal-deep transition-all flex items-center gap-2 shadow-lg cursor-pointer"
+                      className={`px-8 py-3.5 rounded-full font-bold transition-all flex items-center gap-2 shadow-lg ${
+                        isAcademyFormValid && !isSubmitting
+                          ? "bg-primary text-primary-foreground hover:bg-teal-deep cursor-pointer"
+                          : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                      }`}
                     >
                       {isSubmitting ? (
                         <>
@@ -1215,9 +1272,13 @@ Terms Accepted: YES (Policy Version 1.0)
 
                 <button
                   type="button"
-                  disabled={isSubmitting || !instructorData.full_name || !instructorData.email || !instructorData.phone}
+                  disabled={isSubmitting || !isInstructorFormValid}
                   onClick={handleSubmitApplication}
-                  className="px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-bold hover:bg-teal-deep transition-all flex items-center gap-2 shadow-lg cursor-pointer disabled:opacity-50"
+                  className={`px-8 py-3.5 rounded-full font-bold transition-all flex items-center gap-2 shadow-lg ${
+                    isInstructorFormValid && !isSubmitting
+                      ? "bg-primary text-primary-foreground hover:bg-teal-deep cursor-pointer"
+                      : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                  }`}
                 >
                   {isSubmitting ? (
                     <>
