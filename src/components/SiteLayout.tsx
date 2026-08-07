@@ -142,14 +142,14 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-border/60">
-      <div className="mx-auto w-full max-w-none px-6 md:px-12 lg:px-16 h-20 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+      <div className="mx-auto w-full max-w-none px-4 sm:px-6 lg:px-12 h-20 flex items-center justify-between gap-3 lg:gap-6">
         <Logo />
-        <nav className="hidden lg:flex items-center justify-center lg:gap-2 xl:gap-6 lg:text-xs xl:text-sm font-bold text-muted-foreground">
+        <nav className="hidden lg:flex items-center justify-center gap-1 xl:gap-3.5 text-xs xl:text-sm font-bold text-muted-foreground flex-1 max-w-4xl mx-auto">
           {NAV.map((n) => (
             <Link
               key={n.to}
               to={n.to}
-              className="relative whitespace-nowrap px-2.5 py-1.5 rounded-md hover:text-primary hover:bg-primary/10 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              className="relative whitespace-nowrap px-2 xl:px-2.5 py-1.5 rounded-md hover:text-primary hover:bg-primary/10 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
               activeProps={{ className: "text-primary bg-primary/10 after:w-full" }}
               activeOptions={{ exact: n.to === "/" }}
             >
