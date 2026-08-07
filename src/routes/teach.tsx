@@ -794,18 +794,21 @@ Terms Accepted: YES (Policy Version 1.0)
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-xs font-bold uppercase text-foreground mb-1">Organization Type *</label>
-                      <select
-                        value={academyData.org_type}
-                        onChange={(e) => setAcademyData({ ...academyData, org_type: e.target.value })}
-                        className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm font-medium"
-                      >
-                        <option>Training Center / EdTech</option>
-                        <option>University / College</option>
-                        <option>TVET Institution</option>
-                        <option>Secondary / High School</option>
-                        <option>Corporate Academy</option>
-                        <option>Other</option>
-                      </select>
+                      <div className="relative w-full">
+                        <select
+                          value={academyData.org_type}
+                          onChange={(e) => setAcademyData({ ...academyData, org_type: e.target.value })}
+                          className="w-full h-11 px-4 pr-10 rounded-xl border border-border bg-background text-foreground text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary max-w-full"
+                        >
+                          <option className="bg-background text-foreground">Training Center / EdTech</option>
+                          <option className="bg-background text-foreground">University / College</option>
+                          <option className="bg-background text-foreground">TVET Institution</option>
+                          <option className="bg-background text-foreground">Secondary / High School</option>
+                          <option className="bg-background text-foreground">Corporate Academy</option>
+                          <option className="bg-background text-foreground">Other</option>
+                        </select>
+                        <ChevronDown className="absolute right-3.5 top-3.5 size-4 text-muted-foreground pointer-events-none" />
+                      </div>
                     </div>
 
                     <div>
@@ -821,31 +824,37 @@ Terms Accepted: YES (Policy Version 1.0)
 
                     <div>
                       <label className="block text-xs font-bold uppercase text-foreground mb-1">Number of Students</label>
-                      <select
-                        value={academyData.num_students}
-                        onChange={(e) => setAcademyData({ ...academyData, num_students: e.target.value })}
-                        className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm font-medium"
-                      >
-                        <option>Under 50</option>
-                        <option>50 - 200</option>
-                        <option>200 - 500</option>
-                        <option>500 - 1,000</option>
-                        <option>1,000+</option>
-                      </select>
+                      <div className="relative w-full">
+                        <select
+                          value={academyData.num_students}
+                          onChange={(e) => setAcademyData({ ...academyData, num_students: e.target.value })}
+                          className="w-full h-11 px-4 pr-10 rounded-xl border border-border bg-background text-foreground text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary max-w-full"
+                        >
+                          <option className="bg-background text-foreground">Under 50</option>
+                          <option className="bg-background text-foreground">50 - 200</option>
+                          <option className="bg-background text-foreground">200 - 500</option>
+                          <option className="bg-background text-foreground">500 - 1,000</option>
+                          <option className="bg-background text-foreground">1,000+</option>
+                        </select>
+                        <ChevronDown className="absolute right-3.5 top-3.5 size-4 text-muted-foreground pointer-events-none" />
+                      </div>
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold uppercase text-foreground mb-1">Number of Instructors</label>
-                      <select
-                        value={academyData.num_instructors}
-                        onChange={(e) => setAcademyData({ ...academyData, num_instructors: e.target.value })}
-                        className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm font-medium"
-                      >
-                        <option>1 - 5</option>
-                        <option>5 - 15</option>
-                        <option>15 - 50</option>
-                        <option>50+</option>
-                      </select>
+                      <div className="relative w-full">
+                        <select
+                          value={academyData.num_instructors}
+                          onChange={(e) => setAcademyData({ ...academyData, num_instructors: e.target.value })}
+                          className="w-full h-11 px-4 pr-10 rounded-xl border border-border bg-background text-foreground text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary max-w-full"
+                        >
+                          <option className="bg-background text-foreground">1 - 5</option>
+                          <option className="bg-background text-foreground">5 - 15</option>
+                          <option className="bg-background text-foreground">15 - 50</option>
+                          <option className="bg-background text-foreground">50+</option>
+                        </select>
+                        <ChevronDown className="absolute right-3.5 top-3.5 size-4 text-muted-foreground pointer-events-none" />
+                      </div>
                     </div>
 
                     <div className="sm:col-span-2">
@@ -1088,18 +1097,21 @@ Terms Accepted: YES (Policy Version 1.0)
 
                 <div>
                   <label className="block text-xs font-bold uppercase text-foreground mb-1">Highest Level of Education *</label>
-                  <select
-                    value={instructorData.education_level}
-                    onChange={(e) => setInstructorData({ ...instructorData, education_level: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm font-medium"
-                  >
-                    <option>High School</option>
-                    <option>Diploma</option>
-                    <option>Bachelor's Degree</option>
-                    <option>Master's Degree</option>
-                    <option>Doctorate / PhD</option>
-                    <option>Professional Certifications Only</option>
-                  </select>
+                  <div className="relative w-full">
+                    <select
+                      value={instructorData.education_level}
+                      onChange={(e) => setInstructorData({ ...instructorData, education_level: e.target.value })}
+                      className="w-full h-11 px-4 pr-10 rounded-xl border border-border bg-background text-foreground text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary max-w-full"
+                    >
+                      <option className="bg-background text-foreground">High School</option>
+                      <option className="bg-background text-foreground">Diploma</option>
+                      <option className="bg-background text-foreground">Bachelor's Degree</option>
+                      <option className="bg-background text-foreground">Master's Degree</option>
+                      <option className="bg-background text-foreground">Doctorate / PhD</option>
+                      <option className="bg-background text-foreground">Professional Certifications Only</option>
+                    </select>
+                    <ChevronDown className="absolute right-3.5 top-3.5 size-4 text-muted-foreground pointer-events-none" />
+                  </div>
                 </div>
 
                 <div>
@@ -1116,17 +1128,20 @@ Terms Accepted: YES (Policy Version 1.0)
 
                 <div>
                   <label className="block text-xs font-bold uppercase text-foreground mb-1">Years of Teaching Experience *</label>
-                  <select
-                    value={instructorData.teaching_experience_years}
-                    onChange={(e) => setInstructorData({ ...instructorData, teaching_experience_years: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm font-medium"
-                  >
-                    <option>Under 1 Year</option>
-                    <option>1 - 3 Years</option>
-                    <option>3 - 5 Years</option>
-                    <option>5 - 10 Years</option>
-                    <option>10+ Years</option>
-                  </select>
+                  <div className="relative w-full">
+                    <select
+                      value={instructorData.teaching_experience_years}
+                      onChange={(e) => setInstructorData({ ...instructorData, teaching_experience_years: e.target.value })}
+                      className="w-full h-11 px-4 pr-10 rounded-xl border border-border bg-background text-foreground text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary max-w-full"
+                    >
+                      <option className="bg-background text-foreground">Under 1 Year</option>
+                      <option className="bg-background text-foreground">1 - 3 Years</option>
+                      <option className="bg-background text-foreground">3 - 5 Years</option>
+                      <option className="bg-background text-foreground">5 - 10 Years</option>
+                      <option className="bg-background text-foreground">10+ Years</option>
+                    </select>
+                    <ChevronDown className="absolute right-3.5 top-3.5 size-4 text-muted-foreground pointer-events-none" />
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
