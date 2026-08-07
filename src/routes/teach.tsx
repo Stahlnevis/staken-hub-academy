@@ -66,6 +66,13 @@ function TeachPage() {
   const [termCheck3, setTermCheck3] = useState(false);
   const allTermsChecked = termCheck1 && termCheck2 && termCheck3;
 
+  // Reset checkboxes whenever switching role types
+  useEffect(() => {
+    setTermCheck1(false);
+    setTermCheck2(false);
+    setTermCheck3(false);
+  }, [applicantType]);
+
   // Academy Form State (3 Pages)
   const [academyPage, setAcademyPage] = useState<1 | 2 | 3>(1);
   const [academyData, setAcademyData] = useState({
@@ -219,6 +226,18 @@ Terms Accepted: YES (Policy Version 1.0)
 
         if (dbError) {
           console.warn("Database record notice:", dbError);
+          // Fallback to legacy applications table if new schema isn't created yet
+          if (dbError.code === "PGRST205" || dbError.message?.includes("not find")) {
+            await (supabase as any).from("applications").insert({
+              type: "Academy",
+              applicant_name: academyData.contact_person,
+              email: academyData.email,
+              phone: academyData.phone,
+              institution: academyData.organization_name,
+              details: payload,
+              status: "pending",
+            }).catch(() => {});
+          }
         }
       } else {
         // Instructor Submission
@@ -289,6 +308,16 @@ Terms Accepted: YES (Policy Version 1.0)
 
         if (dbError) {
           console.warn("Database record notice:", dbError);
+          if (dbError.code === "PGRST205" || dbError.message?.includes("not find")) {
+            await (supabase as any).from("applications").insert({
+              type: "Instructor",
+              applicant_name: instructorData.full_name,
+              email: instructorData.email,
+              phone: instructorData.phone,
+              details: payload,
+              status: "pending",
+            }).catch(() => {});
+          }
         }
       }
 
@@ -319,6 +348,9 @@ Terms Accepted: YES (Policy Version 1.0)
               onClick={() => {
                 setApplicantType("academy");
                 setCurrentStep("terms");
+                setTermCheck1(false);
+                setTermCheck2(false);
+                setTermCheck3(false);
               }}
               className={`w-full sm:w-auto px-8 py-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-3 text-base font-bold cursor-pointer ${
                 applicantType === "academy"
@@ -335,6 +367,9 @@ Terms Accepted: YES (Policy Version 1.0)
               onClick={() => {
                 setApplicantType("instructor");
                 setCurrentStep("terms");
+                setTermCheck1(false);
+                setTermCheck2(false);
+                setTermCheck3(false);
               }}
               className={`w-full sm:w-auto px-8 py-4 rounded-2xl border-2 transition-all flex items-center justify-center gap-3 text-base font-bold cursor-pointer ${
                 applicantType === "instructor"
