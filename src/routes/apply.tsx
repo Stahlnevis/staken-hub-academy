@@ -367,30 +367,32 @@ function ApplyPage() {
               }
 
               try {
-                await fetch("https://api.web3forms.com/submit", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                  },
-                  body: JSON.stringify({
-                    access_key: accessKey || "68a85024-c2c2-4eca-a212-52221f2d0a17",
-                    subject: `New Application & M-Pesa Payment - ${selectedProgramme}`,
+                await supabase.functions.invoke("send-email", {
+                  body: {
+                    to: "admissions@stakenhub.com",
                     from_name: "Staken Hub Admissions Alert",
-                    ...applicationData,
-                    paymentMethod: "M-Pesa Auto Pay",
-                    mpesaPhoneNumber: mpesaPhone,
-                    amountPaid: `KES ${paymentAmount.toLocaleString()}`,
-                    tuitionPrice: `KES ${finalPrice.toLocaleString()}`,
-                    couponCode: couponCode || "None",
-                    transactionReference: mpesaRef || "(Receipt code sent to applicant via SMS)",
-                    checkoutRequestId: checkoutRequestId,
-                    paymentStatus: "Completed",
-                  }),
+                    subject: `New Application & M-Pesa Payment - ${selectedProgramme}`,
+                    text: `
+NEW APPLICATION & M-PESA PAYMENT DETAILS:
+----------------------------------------
+Applicant Name: ${applicationData?.firstName || ""} ${applicationData?.lastName || ""}
+Email: ${applicationData?.email || "N/A"}
+Phone: ${applicationData?.phone || mpesaPhone}
+Programme: ${selectedProgramme}
+Institution: ${applicationData?.institution || selectedInstitution || "N/A"}
+Payment Method: M-Pesa Auto Pay
+Amount Paid: KES ${paymentAmount.toLocaleString()}
+Tuition Price: KES ${finalPrice.toLocaleString()}
+Coupon Code: ${couponCode || "None"}
+Transaction Ref: ${mpesaRef || "(Receipt code sent to applicant via SMS)"}
+Checkout Request ID: ${checkoutRequestId}
+Status: Completed
+                    `.trim(),
+                  },
                 });
                 setStep("success");
               } catch (err) {
-                console.error("Web3Forms error:", err);
+                console.error("Email send error:", err);
                 setStep("success");
               } finally {
                 setIsSubmitting(false);
@@ -445,28 +447,29 @@ function ApplyPage() {
     const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "";
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: accessKey || "68a85024-c2c2-4eca-a212-52221f2d0a17",
-          subject: `[${applicationData?.institution || selectedInstitution}] Application & Invoice Request - ${selectedProgramme}`,
+      const { data: emailRes, error: emailErr } = await supabase.functions.invoke("send-email", {
+        body: {
+          to: "admissions@stakenhub.com",
           from_name: "Staken Hub Admissions Alert",
-          target_institution_academy: applicationData?.institution || selectedInstitution,
-          ...applicationData,
-          paymentMethod: "PayPal / Visa Card (Invoice Request)",
-          amountRequested: `KES ${paymentAmount.toLocaleString()}`,
-          tuitionPrice: `KES ${finalPrice.toLocaleString()}`,
-          couponCode: couponCode || "None",
-          paymentStatus: "Pending Invoice",
-        }),
+          subject: `[${applicationData?.institution || selectedInstitution}] Application & Invoice Request - ${selectedProgramme}`,
+          text: `
+NEW INVOICE & PAYMENT REQUEST:
+-----------------------------
+Applicant Name: ${applicationData?.firstName || ""} ${applicationData?.lastName || ""}
+Email: ${applicationData?.email || "N/A"}
+Phone: ${applicationData?.phone || "N/A"}
+Programme: ${selectedProgramme}
+Target Institution: ${applicationData?.institution || selectedInstitution}
+Payment Method: PayPal / Visa Card (Invoice Request)
+Requested Deposit: KES ${paymentAmount.toLocaleString()}
+Tuition Price: KES ${finalPrice.toLocaleString()}
+Coupon Code: ${couponCode || "None"}
+Status: Pending Invoice
+          `.trim(),
+        },
       });
 
-      const result = await response.json();
-      if (result.success) {
+      if (!emailErr) {
         // Insert application data to Supabase
         try {
           await supabase.from("applications").insert({

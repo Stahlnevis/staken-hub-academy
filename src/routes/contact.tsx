@@ -3,6 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { SiteLayout, PageHero } from "@/components/SiteLayout";
 import { Mail, Phone, MapPin, MessageCircle, Send, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -46,29 +47,30 @@ function ContactPage() {
     setIsSubmitting(true);
     setStatus(null);
 
-    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "";
-
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          ...parsed.data,
-          access_key: accessKey || "68a85024-c2c2-4eca-a212-52221f2d0a17",
-          subject: `New Contact Enquiry - ${parsed.data.subject}`,
+      const { error: sendErr } = await supabase.functions.invoke("send-email", {
+        body: {
+          to: "admissions@stakenhub.com",
           from_name: "Staken Hub Contact Alert",
-        }),
+          subject: `New Contact Enquiry - ${parsed.data.subject}`,
+          text: `
+NEW CONTACT ENQUIRY:
+-------------------
+Name: ${parsed.data.name}
+Email: ${parsed.data.email}
+Subject: ${parsed.data.subject}
+
+Message:
+${parsed.data.message}
+          `.trim(),
+        },
       });
 
-      const result = await response.json();
-      if (result.success) {
+      if (!sendErr) {
         setStatus("ok");
         formElement.reset();
       } else {
-        console.error("Web3Forms submission failed:", result);
+        console.error("Submission failed:", sendErr);
         setStatus("err");
       }
     } catch (err) {

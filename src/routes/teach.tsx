@@ -212,15 +212,13 @@ function TeachPage() {
           ref_code: refCode,
         };
 
-        // 1. Send email via Web3Forms
-        await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            access_key: accessKey,
-            subject: `New Partner Academy Application: ${academyData.organization_name} (${refCode})`,
+        // 1. Send email via Resend edge function
+        await supabase.functions.invoke("send-email", {
+          body: {
+            to: "admissions@stakenhub.com",
             from_name: "Staken Hub Partnership Portal",
-            message: `
+            subject: `New Partner Academy Application: ${academyData.organization_name} (${refCode})`,
+            text: `
 NEW PARTNER ACADEMY APPLICATION DETAILS:
 ----------------------------------------
 Ref Code: ${refCode}
@@ -244,7 +242,7 @@ How Heard About Us: ${academyData.hear_about_us}
 Supporting Documents: ${academyData.documents_url || "None provided"}
 Terms Accepted: YES (Policy Version 1.0)
             `.trim(),
-          }),
+          },
         });
 
         // 2. Save reference record to Supabase (chained to both databases)
@@ -325,15 +323,13 @@ Terms Accepted: YES (Policy Version 1.0)
           ref_code: refCode,
         };
 
-        // 1. Send email via Web3Forms
-        await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            access_key: accessKey,
-            subject: `New Instructor Application: ${instructorData.full_name} (${refCode})`,
+        // 1. Send email via Resend edge function
+        await supabase.functions.invoke("send-email", {
+          body: {
+            to: "admissions@stakenhub.com",
             from_name: "Staken Hub Instructor Portal",
-            message: `
+            subject: `New Instructor Application: ${instructorData.full_name} (${refCode})`,
+            text: `
 NEW INSTRUCTOR APPLICATION DETAILS:
 -----------------------------------
 Ref Code: ${refCode}
@@ -354,7 +350,7 @@ LinkedIn Profile: ${instructorData.linkedin_profile || "N/A"}
 Portfolio / Website: ${instructorData.portfolio_website || "N/A"}
 Terms Accepted: YES (Policy Version 1.0)
             `.trim(),
-          }),
+          },
         });
 
         // 2. Save reference record to chained Supabase databases
