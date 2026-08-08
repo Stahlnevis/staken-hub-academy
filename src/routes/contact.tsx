@@ -51,13 +51,13 @@ function ContactPage() {
       const { error: sendErr } = await supabase.functions.invoke("send-email", {
         body: {
           to: "admissions@stakenhub.com",
-          from_name: "Staken Hub Contact Alert",
+          to_name: "Admissions Team",
+          from_name: "StakenHub Contact Alert",
           subject: `New Contact Enquiry - ${parsed.data.subject}`,
           text: `
 NEW CONTACT ENQUIRY:
--------------------
-Name: ${parsed.data.name}
-Email: ${parsed.data.email}
+Sender Name: ${parsed.data.name}
+Email Address: ${parsed.data.email}
 Subject: ${parsed.data.subject}
 
 Message:
@@ -65,6 +65,27 @@ ${parsed.data.message}
           `.trim(),
         },
       });
+
+      // Send automated acknowledgment to user
+      if (parsed.data.email) {
+        await supabase.functions.invoke("send-email", {
+          body: {
+            to: parsed.data.email,
+            to_name: parsed.data.name,
+            from_name: "StakenHub Academy Support",
+            subject: `We received your enquiry: ${parsed.data.subject}`,
+            text: `Thank you for reaching out to StakenHub Academy. We have received your message and our team will get back to you shortly.
+
+ENQUIRY SUMMARY:
+Subject: ${parsed.data.subject}
+Message:
+${parsed.data.message}
+
+Best regards,
+StakenHub Support Team`.trim(),
+          },
+        });
+      }
 
       if (!sendErr) {
         setStatus("ok");

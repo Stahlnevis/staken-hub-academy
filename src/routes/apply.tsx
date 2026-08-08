@@ -367,14 +367,15 @@ function ApplyPage() {
               }
 
               try {
+                // Alert admissions team
                 await supabase.functions.invoke("send-email", {
                   body: {
                     to: "admissions@stakenhub.com",
-                    from_name: "Staken Hub Admissions Alert",
+                    to_name: "Admissions Team",
+                    from_name: "StakenHub Admissions Alert",
                     subject: `New Application & M-Pesa Payment - ${selectedProgramme}`,
                     text: `
 NEW APPLICATION & M-PESA PAYMENT DETAILS:
-----------------------------------------
 Applicant Name: ${applicationData?.firstName || ""} ${applicationData?.lastName || ""}
 Email: ${applicationData?.email || "N/A"}
 Phone: ${applicationData?.phone || mpesaPhone}
@@ -390,6 +391,32 @@ Status: Completed
                     `.trim(),
                   },
                 });
+
+                // Send receipt confirmation email to applicant
+                if (applicationData?.email) {
+                  await supabase.functions.invoke("send-email", {
+                    body: {
+                      to: applicationData.email,
+                      to_name: `${applicationData.firstName} ${applicationData.lastName}`,
+                      from_name: "StakenHub Academy Admissions",
+                      subject: `Application & Payment Confirmation - ${selectedProgramme}`,
+                      text: `Thank you for completing your application and payment for ${selectedProgramme} at ${applicationData.institution || selectedInstitution || "StakenHub Academy"}.
+
+PAYMENT RECEIPT DETAILS:
+Applicant Name: ${applicationData.firstName} ${applicationData.lastName}
+Programme: ${selectedProgramme}
+Institution: ${applicationData.institution || selectedInstitution || "StakenHub Academy"}
+Amount Paid: KES ${paymentAmount.toLocaleString()}
+Payment Status: COMPLETED
+Transaction Ref: ${mpesaRef || "Confirmed via M-Pesa"}
+
+NEXT STEPS:
+Our admissions office has received your payment and application details. You will receive an email shortly with your student portal credentials and orientation schedule.
+
+Welcome to StakenHub Academy!`.trim(),
+                    },
+                  });
+                }
                 setStep("success");
               } catch (err) {
                 console.error("Email send error:", err);
@@ -450,11 +477,11 @@ Status: Completed
       const { data: emailRes, error: emailErr } = await supabase.functions.invoke("send-email", {
         body: {
           to: "admissions@stakenhub.com",
-          from_name: "Staken Hub Admissions Alert",
+          to_name: "Admissions Team",
+          from_name: "StakenHub Admissions Alert",
           subject: `[${applicationData?.institution || selectedInstitution}] Application & Invoice Request - ${selectedProgramme}`,
           text: `
 NEW INVOICE & PAYMENT REQUEST:
------------------------------
 Applicant Name: ${applicationData?.firstName || ""} ${applicationData?.lastName || ""}
 Email: ${applicationData?.email || "N/A"}
 Phone: ${applicationData?.phone || "N/A"}
@@ -469,7 +496,30 @@ Status: Pending Invoice
         },
       });
 
-      if (!emailErr) {
+      // Send invoice confirmation to applicant
+      if (applicationData?.email) {
+        await supabase.functions.invoke("send-email", {
+          body: {
+            to: applicationData.email,
+            to_name: `${applicationData.firstName} ${applicationData.lastName}`,
+            from_name: "StakenHub Academy Admissions",
+            subject: `Application Received - Invoice Requested for ${selectedProgramme}`,
+            text: `Thank you for applying to ${selectedProgramme} at ${applicationData.institution || selectedInstitution}. We have received your invoice request for tuition payment.
+
+APPLICATION SUMMARY:
+Applicant Name: ${applicationData.firstName} ${applicationData.lastName}
+Programme: ${selectedProgramme}
+Institution: ${applicationData.institution || selectedInstitution}
+Requested Deposit Amount: KES ${paymentAmount.toLocaleString()}
+Status: PENDING INVOICE GENERATION
+
+NEXT STEPS:
+Our finance team will prepare and send an official invoice with payment instructions (Credit Card / Bank Wire / PayPal) to your email address shortly.`.trim(),
+          },
+        });
+      }
+
+         if (!emailErr) {
         // Insert application data to Supabase
         try {
           await supabase.from("applications").insert({
@@ -479,9 +529,8 @@ Status: Pending Invoice
             phone: applicationData.phone,
             programme: selectedProgramme,
             institution: applicationData.institution || selectedInstitution,
-            mode: applicationData.mode || "Online",
-            goals: applicationData.goals,
-            coupon_code: couponCode || null,
+            school_level: applicationData.schoolLevel || null,
+            parent_name: null,
             child_name: null,
             child_age: null,
             payment_method: "PayPal / Visa Card (Invoice Request)",
@@ -493,7 +542,7 @@ Status: Pending Invoice
         }
         setStep("success");
       } else {
-        console.error("Web3Forms error:", result);
+        console.error("Email send error:", emailErr);
         setSubmitStatus("error");
       }
     } catch (err) {

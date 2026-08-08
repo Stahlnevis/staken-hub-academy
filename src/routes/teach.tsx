@@ -212,15 +212,15 @@ function TeachPage() {
           ref_code: refCode,
         };
 
-        // 1. Send email via Resend edge function
+        // 1. Send email via Resend edge function (Admissions alert)
         await supabase.functions.invoke("send-email", {
           body: {
             to: "admissions@stakenhub.com",
-            from_name: "Staken Hub Partnership Portal",
+            to_name: "Admissions Team",
+            from_name: "StakenHub Partnership Portal",
             subject: `New Partner Academy Application: ${academyData.organization_name} (${refCode})`,
             text: `
 NEW PARTNER ACADEMY APPLICATION DETAILS:
-----------------------------------------
 Ref Code: ${refCode}
 Organization Name: ${academyData.organization_name}
 Contact Person: ${academyData.contact_person} (${academyData.position})
@@ -237,13 +237,35 @@ Number of Students: ${academyData.num_students}
 Number of Instructors: ${academyData.num_instructors}
 Training Areas: ${finalAreas.join(", ")}
 Currently Uses LMS: ${academyData.uses_lms}
-Why Partner with Staken Hub: ${academyData.partner_rationale}
+Why Partner with StakenHub: ${academyData.partner_rationale}
 How Heard About Us: ${academyData.hear_about_us}
 Supporting Documents: ${academyData.documents_url || "None provided"}
 Terms Accepted: YES (Policy Version 1.0)
             `.trim(),
           },
         });
+
+        // Send confirmation email to applicant institution
+        if (academyData.email) {
+          await supabase.functions.invoke("send-email", {
+            body: {
+              to: academyData.email,
+              to_name: academyData.contact_person,
+              from_name: "StakenHub Partner Office",
+              subject: `Application Received - StakenHub Partner Academy (${refCode})`,
+              text: `Thank you for submitting your application for ${academyData.organization_name} to join the StakenHub Partner Academy Network.
+
+APPLICATION SUMMARY:
+Ref Code: ${refCode}
+Organization Name: ${academyData.organization_name}
+Contact Person: ${academyData.contact_person}
+Status: UNDER REVIEW
+
+NEXT STEPS:
+Our Institutional Partnerships team is reviewing your application details and uploaded documents. We will get back to you within 2 business days regarding account setup and agreement verification.`.trim(),
+            },
+          });
+        }
 
         // 2. Save reference record to Supabase (chained to both databases)
         const academyRecord = {
@@ -323,15 +345,15 @@ Terms Accepted: YES (Policy Version 1.0)
           ref_code: refCode,
         };
 
-        // 1. Send email via Resend edge function
+        // 1. Send email via Resend edge function (Admissions alert)
         await supabase.functions.invoke("send-email", {
           body: {
             to: "admissions@stakenhub.com",
-            from_name: "Staken Hub Instructor Portal",
+            to_name: "Admissions Team",
+            from_name: "StakenHub Instructor Portal",
             subject: `New Instructor Application: ${instructorData.full_name} (${refCode})`,
             text: `
 NEW INSTRUCTOR APPLICATION DETAILS:
------------------------------------
 Ref Code: ${refCode}
 Full Name: ${instructorData.full_name}
 Email Address: ${instructorData.email}
@@ -352,6 +374,28 @@ Terms Accepted: YES (Policy Version 1.0)
             `.trim(),
           },
         });
+
+        // Send confirmation email to applicant instructor
+        if (instructorData.email) {
+          await supabase.functions.invoke("send-email", {
+            body: {
+              to: instructorData.email,
+              to_name: instructorData.full_name,
+              from_name: "StakenHub Instructor Relations",
+              subject: `Instructor Application Received (${refCode})`,
+              text: `Thank you for applying to become an Instructor on StakenHub Academy.
+
+APPLICATION SUMMARY:
+Ref Code: ${refCode}
+Full Name: ${instructorData.full_name}
+Areas Selected: ${finalAreas.join(", ")}
+Status: UNDER REVIEW
+
+NEXT STEPS:
+Our Academic Team is evaluating your application and qualifications. We will contact you via email within 2-3 business days regarding the next steps.`.trim(),
+            },
+          });
+        }
 
         // 2. Save reference record to chained Supabase databases
         const instructorRecord = {
