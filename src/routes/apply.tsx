@@ -374,7 +374,7 @@ function ApplyPage() {
                     Accept: "application/json",
                   },
                   body: JSON.stringify({
-                    access_key: accessKey || "YOUR_WEB3FORMS_ACCESS_KEY_HERE",
+                    access_key: accessKey || "68a85024-c2c2-4eca-a212-52221f2d0a17",
                     subject: `New Application & M-Pesa Payment - ${selectedProgramme}`,
                     from_name: "Staken Hub Admissions Alert",
                     ...applicationData,
@@ -452,7 +452,7 @@ function ApplyPage() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: accessKey || "YOUR_WEB3FORMS_ACCESS_KEY_HERE",
+          access_key: accessKey || "68a85024-c2c2-4eca-a212-52221f2d0a17",
           subject: `[${applicationData?.institution || selectedInstitution}] Application & Invoice Request - ${selectedProgramme}`,
           from_name: "Staken Hub Admissions Alert",
           target_institution_academy: applicationData?.institution || selectedInstitution,
