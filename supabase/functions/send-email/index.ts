@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const FROM_EMAIL = "StakenHub Academy <admissions@stakenhub.com>";
+const FROM_EMAIL = "StakenHub Ltd <admissions@stakenhub.com>";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -179,7 +179,7 @@ function buildStyledEmailHtml(params: {
                 <tr>
                   <td>
                     <div style="color:#ffffff; font-size:22px; font-weight:800; letter-spacing: 0.5px; font-family: sans-serif;">
-                      STAKEN<span style="color:#e11d48;">HUB</span> ACADEMY
+                      STAKEN<span style="color:#e11d48;">HUB</span> LTD
                     </div>
                     <div style="color:#94a3b8; font-size:11px; margin-top:4px; font-weight:600; text-transform: uppercase; letter-spacing: 1.2px;">
                       Empowering Digital & Tech Excellence
@@ -211,7 +211,7 @@ function buildStyledEmailHtml(params: {
           <tr>
             <td style="background-color:#f8fafc; padding: 24px 32px; border-top: 1px solid #e2e8f0; text-align: center; color:#64748b; font-size:12px; line-height:1.5;">
               <p style="margin: 0 0 6px 0; font-weight:700; color:#334155;">
-                StakenHub Academy & Ecosystem
+                StakenHub Ltd & Ecosystem
               </p>
               <p style="margin: 0 0 12px 0; color: #64748b;">
                 Empowering Digital Skills & Institution Partnerships Worldwide
@@ -222,7 +222,7 @@ function buildStyledEmailHtml(params: {
                 <a href="mailto:admissions@stakenhub.com" style="color:#e11d48; text-decoration:none; font-weight:600;">Contact Admissions</a>
               </p>
               <div style="margin-top: 16px; font-size: 11px; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
-                This is an automated notification from StakenHub Academy. Please do not reply directly to system alerts.
+                This is an automated notification from StakenHub Ltd. Please do not reply directly to system alerts.
               </div>
             </td>
           </tr>
